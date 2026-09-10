@@ -200,9 +200,10 @@ export default function Hero() {
         <div className="absolute top-1/3 mt-14 left-1/2">
           <h2 className="text-7xl font-sans leading-7 tracking-normal font-semibold">
             & BUILDER <br />
-            <span className="text-lg tracking-tight font-sans">
+            <span className="text-lg tracking-tight leading-0 font-sans font-medium">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit,
-              facere!
+              facere! <br />
+              Lorem ipsum dolor, sit amet consectetur adipisicing.
             </span>
           </h2>
 
@@ -273,6 +274,12 @@ export default function Hero() {
           ref={bottomArrowRef}
           type="button"
           aria-label="Scroll down"
+          onClick={() =>
+            window.scrollTo({
+              top: window.innerHeight,
+              behavior: "smooth",
+            })
+          }
           className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/90 hover:bg-white border border-black/10 shadow-sm flex items-center justify-center text-[#141b16] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
         >
           <ArrowDown className="w-4 h-4 text-[#141b16]" />
