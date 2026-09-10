@@ -194,18 +194,20 @@ export default function Hero() {
 
       {/* Main Center Stage */}
       <div className="relative w-full h-full! z-20">
-        <h1 className="text-[112px] font-serif tracking-wider italic font-light absolute top-20 left-[40%] -translate-x-1/2">
+        <h1 className="text-[112px] font-serif tracking-wider italic font-light absolute top-16 left-[40%] -translate-x-1/2">
           AI ENGINEER
         </h1>
         <div className="absolute top-1/3 mt-14 left-1/2">
           <h2 className="text-7xl font-sans leading-7 tracking-normal font-semibold">
-            & BUILDER <br />
+            & BUILDER
+          </h2>
+          <p className="mt-10">
             <span className="text-lg tracking-tight leading-0 font-sans font-medium">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit,
               facere! <br />
               Lorem ipsum dolor, sit amet consectetur adipisicing.
             </span>
-          </h2>
+          </p>
 
           <div className="flex items-center gap-3 mt-6">
             <NoiseBackground
@@ -225,13 +227,22 @@ export default function Hero() {
               </button>
             </NoiseBackground>
 
-            <button
-              type="button"
-              className="cursor-pointer rounded-full bg-white/90 hover:bg-white border border-black/10 px-5 py-2.5 text-xs sm:text-sm font-semibold text-[#141b16] shadow-sm transition-all duration-200 hover:scale-105 active:scale-98 flex items-center gap-2"
+            <NoiseBackground
+              containerClassName="w-fit p-1 rounded-full"
+              gradientColors={[
+                "rgb(197, 235, 53)",
+                "rgb(181, 224, 36)",
+                "rgb(220, 252, 70)",
+              ]}
             >
-              <span>Know more about me</span>
-              <ArrowUpRight className="w-4 h-4 text-[#141b16]" />
-            </button>
+              <button
+                type="button"
+                className="h-full w-full cursor-pointer rounded-full bg-linear-to-r from-neutral-100 via-neutral-100 to-white px-5 py-2.5 text-xs sm:text-sm font-semibold text-black shadow-[0px_2px_0px_0px_var(--color-neutral-50)_inset,0px_0.5px_1px_0px_var(--color-neutral-400)] transition-all duration-100 active:scale-98 flex items-center gap-2"
+              >
+                <span>See my Blogs</span>
+                <ArrowUpRight className="w-4 h-4 text-black" />
+              </button>
+            </NoiseBackground>
           </div>
         </div>
       </div>
@@ -257,7 +268,7 @@ export default function Hero() {
       <aside
         ref={quickInfoRef}
         aria-label="Quick Info"
-        className="fixed right-0 top-1/2 -translate-y-1/2 z-30 bg-white/95 backdrop-blur-sm border-l border-y border-black/10 py-3.5 px-1.5 rounded-l-md shadow-sm flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-300 group"
+        className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white/95 backdrop-blur-sm border-l border-y border-black/10 py-3.5 px-1.5 rounded-l-md shadow-sm flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-300 group"
       >
         <span
           className="font-sans text-[11px] font-medium tracking-wider text-neutral-600 group-hover:text-black uppercase whitespace-nowrap"
@@ -315,7 +326,13 @@ export default function Hero() {
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab("ABOUT")}
+            onClick={() => {
+              setActiveTab("ABOUT");
+              window.scrollTo({
+                top: window.innerHeight,
+                behavior: "smooth",
+              });
+            }}
             className={`px-5 sm:px-6 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer ${
               activeTab === "ABOUT"
                 ? "bg-[#c5eb35] text-[#141b16] shadow-sm scale-[1.02]"
