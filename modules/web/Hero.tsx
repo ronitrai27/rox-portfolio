@@ -134,7 +134,7 @@ export default function Hero({ isLoaded = false }: HeroProps) {
       bottomArrowRef.current,
       bottomSocialsRef.current,
       quickInfoRef.current,
-    ].filter((el): el is Element => Boolean(el));
+    ].filter((el): el is HTMLButtonElement | HTMLDivElement => Boolean(el));
 
     if (bottomControls.length > 0) {
       tl.to(

@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { ArrowUpRight } from "lucide-react";
+import Footer from "./Footer";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -112,8 +113,8 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
     const projectsSubtitleRef = useRef<HTMLParagraphElement>(null);
     const cardsTrackRef = useRef<HTMLDivElement>(null);
 
-    // Achievements underlying element
-    const achievementsRef = useRef<HTMLDivElement>(null);
+    // Footer underlying element
+    const footerRef = useRef<HTMLDivElement>(null);
 
     // Combine forwarded ref and internal ref
     const setRefs = (node: HTMLDivElement | null) => {
@@ -363,7 +364,7 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
     return (
       <section
         ref={setRefs}
-        aria-label="Overlay Section — About, Projects & Achievements"
+        aria-label="Overlay Section — About, Projects & Footer"
         className={`relative w-full bg-[#123826] text-white select-none ${className}`}
       >
         {/* ==================================================================== */}
@@ -371,7 +372,7 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
         {/* ==================================================================== */}
         <div
           id="about-section"
-          className="relative min-h-screen w-full flex flex-col justify-between items-center px-4 sm:px-6 md:px-12 py-12 sm:py-16 md:py-20 shadow-[0_-30px_70px_rgba(0,0,0,0.55)] overflow-hidden bg-[#123826] rounded-t-none z-20"
+          className="relative min-h-screen w-full flex flex-col justify-between items-center px-4 sm:px-6 md:px-12 py-12 sm:py-16 md:py-20 overflow-hidden bg-[#123826] rounded-t-none z-20"
         >
           {/* Subtle radial emerald background ambient glow */}
           <div
@@ -474,30 +475,13 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
           id="works-stage"
           className="relative w-full h-screen overflow-hidden select-none z-20"
         >
-          {/* Layer 0 (Underneath): Pure Green Achievements Section */}
-          <div
-            ref={achievementsRef}
-            id="achieve-section"
-            aria-label="Achievements Section"
-            className="absolute inset-0 w-full h-full bg-[#123826] overflow-hidden select-none z-10"
-          >
-            {/* Subtle radial emerald background glow */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background:
-                  "radial-gradient(ellipse 80% 50% at 50% 50%, rgba(34, 110, 72, 0.45) 0%, rgba(18, 56, 38, 0.95) 80%, #0d2e1f 100%)",
-              }}
-            />
-
-            {/* Film grain noise overlay */}
-            <div className="absolute inset-0 bg-noise opacity-15 pointer-events-none mix-blend-overlay" />
-          </div>
+          {/* Layer 0 (Underneath): Footer Section */}
+          <Footer ref={footerRef} />
 
           {/* Layer 1 (On Top): Projects Panel — Slides UPWARD on scroll! */}
           <div
             ref={projectsPanelRef}
-            className="absolute inset-0 w-full h-full z-20 overflow-hidden rounded-b-[40px] sm:rounded-b-[56px] shadow-[0_40px_100px_rgba(0,0,0,0.65)] will-change-transform"
+            className="absolute inset-0 w-full h-full z-20 overflow-hidden rounded-b-xl sm:rounded-b-2xl will-change-transform"
           >
             {/* Stage Background: transitions from #123826 to #eaeae8 */}
             <div
@@ -533,7 +517,7 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
               {projectsData.map((project) => (
                 <article
                   key={project.id}
-                  className="group relative flex-shrink-0 w-[290px] sm:w-[350px] md:w-[410px] lg:w-[440px] h-[430px] sm:h-[500px] md:h-[550px] rounded-[28px] sm:rounded-[36px] overflow-hidden bg-neutral-900 shadow-[0_22px_60px_rgba(0,0,0,0.18)] border border-black/10 transition-all duration-500 hover:shadow-[0_30px_70px_rgba(0,0,0,0.28)] hover:-translate-y-2 cursor-pointer will-change-transform"
+                  className="group relative flex-shrink-0 w-[290px] sm:w-[350px] md:w-[410px] lg:w-[440px] h-[430px] sm:h-[500px] md:h-[550px] rounded-xl sm:rounded-2xl overflow-hidden bg-neutral-900 shadow-[0_22px_60px_rgba(0,0,0,0.18)] border border-black/10 transition-all duration-500 hover:shadow-[0_30px_70px_rgba(0,0,0,0.28)] hover:-translate-y-2 cursor-pointer will-change-transform"
                 >
                   {/* Project Image */}
                   <div className="relative w-full h-full overflow-hidden">

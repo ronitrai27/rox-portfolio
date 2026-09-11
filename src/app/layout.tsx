@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { SmoothCursor } from "@/components/ui/smooth-cursor";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Prisma — Creative Studio",
+  title: "ROX — Full-Stack AI Engineer",
   description:
-    "A worldwide network of visual artists, filmmakers and storytellers bound by passion and hunger to unlock potential.",
+    "Full-Stack AI Engineer & Builder architecting intelligent systems and shipping at scale.",
 };
 
 export default function RootLayout({
@@ -31,6 +32,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-white text-neutral-900 selection:bg-[#c5eb35] selection:text-black">
+        <SmoothCursor />
         {children}
       </body>
     </html>

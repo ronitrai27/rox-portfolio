@@ -52,6 +52,13 @@
 
 * {
   box-sizing: border-box;
+  cursor: none !important;
+}
+
+input,
+textarea,
+select {
+  cursor: text !important;
 }
 
 .font-serif {
