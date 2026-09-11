@@ -49,7 +49,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Overlay Section: clean rounded top gliding over hero */}
+      {/* Extended Overlay Section: includes About, Video Capsule, and Projects below it */}
       <Overlay ref={overlayRef} className="relative z-20" />
     </main>
   );
