@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -9,25 +9,24 @@ import { NoiseBackground } from "@/components/ui/noise-background";
 
 gsap.registerPlugin(useGSAP);
 
-export default function Hero() {
+interface HeroProps {
+  isLoaded?: boolean;
+}
+
+export default function Hero({ isLoaded = false }: HeroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const topNavRef = useRef<HTMLDivElement>(null);
   const title1Ref = useRef<HTMLHeadingElement>(null);
   const title2Ref = useRef<HTMLHeadingElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const taglineRef = useRef<HTMLDivElement>(null);
-  const bottomNavRef = useRef<HTMLDivElement>(null);
   const bottomArrowRef = useRef<HTMLButtonElement>(null);
   const bottomSocialsRef = useRef<HTMLDivElement>(null);
   const quickInfoRef = useRef<HTMLDivElement>(null);
 
-  const [activeTab, setActiveTab] = useState<"HOME" | "WORKS" | "ABOUT">(
-    "HOME",
-  );
-
+  // Set initial states for clean GSAP entrance
   useGSAP(
     () => {
-      // Helper for safely setting initial states
       const safeSet = (
         targets: (Element | null | undefined)[] | Element | null | undefined,
         vars: gsap.TweenVars,
@@ -42,12 +41,10 @@ export default function Hero() {
         }
       };
 
-      // Set initial states for clean GSAP entrance
-      safeSet(topNavRef.current, { autoAlpha: 0, y: -30 });
-      safeSet([title1Ref.current, title2Ref.current], { autoAlpha: 0, y: 50 });
-      safeSet(taglineRef.current, { autoAlpha: 0, y: 25 });
-      safeSet(imageRef.current, { autoAlpha: 0, y: 60 });
-      safeSet(bottomNavRef.current, { autoAlpha: 0, y: 35 });
+      safeSet(topNavRef.current, { autoAlpha: 0, y: -25 });
+      safeSet([title1Ref.current, title2Ref.current], { autoAlpha: 0, y: 55 });
+      safeSet(taglineRef.current, { autoAlpha: 0, y: 30 });
+      safeSet(imageRef.current, { autoAlpha: 0, y: 110, scale: 0.95 });
       safeSet(
         [
           bottomArrowRef.current,
@@ -59,116 +56,105 @@ export default function Hero() {
           scale: 0.85,
         },
       );
-
-      // Master timeline synchronized with the preloader swipe-up (starts around 2.95s)
-      const tl = gsap.timeline({
-        delay: 2.95,
-        defaults: { ease: "power3.out" },
-      });
-
-      // 1. Top bar fades down
-      if (topNavRef.current) {
-        tl.to(topNavRef.current, {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.9,
-        });
-      }
-
-      // 2. Large Serif Italic Titles rise into place slowly
-      if (title1Ref.current) {
-        tl.to(
-          title1Ref.current,
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 1.3,
-          },
-          "-=0.5",
-        );
-      }
-
-      if (title2Ref.current) {
-        tl.to(
-          title2Ref.current,
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 1.3,
-          },
-          "-=0.9",
-        );
-      }
-
-      // 3. User image rises into place at the bottom foreground
-      if (imageRef.current) {
-        tl.to(
-          imageRef.current,
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 1.4,
-            ease: "power2.out",
-          },
-          "-=0.8",
-        );
-      }
-
-      // 4. Tagline fades in
-      if (taglineRef.current) {
-        tl.to(
-          taglineRef.current,
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 1.0,
-          },
-          "-=0.7",
-        );
-      }
-
-      // 5. Floating Bottom Navigation slides up
-      if (bottomNavRef.current) {
-        tl.to(
-          bottomNavRef.current,
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.9,
-            ease: "back.out(1.4)",
-          },
-          "-=0.6",
-        );
-      }
-
-      // 6. Left circular arrow, right socials, and quick-info tab appear
-      const bottomControls = [
-        bottomArrowRef.current,
-        bottomSocialsRef.current,
-        quickInfoRef.current,
-      ].filter((el): el is Element => Boolean(el));
-
-      if (bottomControls.length > 0) {
-        tl.to(
-          bottomControls,
-          {
-            autoAlpha: 1,
-            scale: 1,
-            duration: 0.8,
-            stagger: 0.12,
-            ease: "back.out(1.5)",
-          },
-          "-=0.5",
-        );
-      }
     },
     { scope: containerRef },
   );
 
+  // Trigger smooth entrance animation as soon as the loading screen finishes
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    const tl = gsap.timeline({
+      defaults: { ease: "power3.out" },
+    });
+
+    // 1. Top bar fades down
+    if (topNavRef.current) {
+      tl.to(
+        topNavRef.current,
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 1.0,
+          ease: "power2.out",
+        },
+        0,
+      );
+    }
+
+    // 2. Large Serif Italic Titles rise into place slowly
+    const titles = [title1Ref.current, title2Ref.current].filter(
+      (el): el is HTMLHeadingElement => Boolean(el),
+    );
+    if (titles.length > 0) {
+      tl.to(
+        titles,
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 1.3,
+          stagger: 0.18,
+          ease: "power3.out",
+        },
+        0.1,
+      );
+    }
+
+    // 3. User image rises into place from bottom with smooth fade
+    if (imageRef.current) {
+      tl.to(
+        imageRef.current,
+        {
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          duration: 1.6,
+          ease: "power2.out",
+        },
+        0.15,
+      );
+    }
+
+    // 4. Tagline & buttons fade in
+    if (taglineRef.current) {
+      tl.to(
+        taglineRef.current,
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 1.2,
+          ease: "power2.out",
+        },
+        0.35,
+      );
+    }
+
+    // 5. Left circular arrow, right socials, and quick-info tab appear
+    const bottomControls = [
+      bottomArrowRef.current,
+      bottomSocialsRef.current,
+      quickInfoRef.current,
+    ].filter((el): el is Element => Boolean(el));
+
+    if (bottomControls.length > 0) {
+      tl.to(
+        bottomControls,
+        {
+          autoAlpha: 1,
+          scale: 1,
+          duration: 0.9,
+          stagger: 0.1,
+          ease: "back.out(1.4)",
+        },
+        0.5,
+      );
+    }
+  }, [isLoaded]);
+
   return (
     <section
       ref={containerRef}
-      className="relative h-screen w-full bg-[#eaeae8] text-black overflow-hidden flex flex-col justify-between px-6  py-6 select-none"
+      className="relative h-screen w-full bg-[#eaeae8] text-black overflow-hidden flex flex-col justify-between px-6 py-6 select-none"
     >
       {/* Top Header Bar */}
       <header
@@ -183,6 +169,12 @@ export default function Hero() {
         {/* Contact Pill Button */}
         <button
           type="button"
+          onClick={() => {
+            const aboutEl = document.getElementById("about-section");
+            if (aboutEl) {
+              aboutEl.scrollIntoView({ behavior: "smooth" });
+            }
+          }}
           className="group bg-[#c5eb35] hover:bg-[#b5e024] text-[#141b16] font-sans font-semibold text-xs sm:text-sm px-6 py-2.5 rounded-full flex items-center gap-2 transition-all duration-300 shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
         >
           <span>Contact</span>
@@ -194,11 +186,17 @@ export default function Hero() {
 
       {/* Main Center Stage */}
       <div className="relative w-full h-full! z-20">
-        <h1 className="text-[112px] font-serif tracking-wider italic font-light absolute top-16 left-[40%] -translate-x-1/2">
+        <h1
+          ref={title1Ref}
+          className="text-[112px] font-serif tracking-wider italic font-light absolute top-16 left-[40%] -translate-x-1/2 will-change-transform"
+        >
           AI ENGINEER
         </h1>
-        <div className="absolute top-1/3 mt-14 left-1/2">
-          <h2 className="text-7xl font-sans leading-7 tracking-normal font-semibold">
+        <div ref={taglineRef} className="absolute top-1/3 mt-14 left-1/2 will-change-transform">
+          <h2
+            ref={title2Ref}
+            className="text-7xl font-sans leading-7 tracking-normal font-semibold"
+          >
             & BUILDER
           </h2>
           <p className="mt-10">
@@ -237,6 +235,12 @@ export default function Hero() {
             >
               <button
                 type="button"
+                onClick={() => {
+                  const worksEl = document.getElementById("works-stage");
+                  if (worksEl) {
+                    worksEl.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
                 className="h-full w-full cursor-pointer rounded-full bg-linear-to-r from-neutral-100 via-neutral-100 to-white px-5 py-2.5 text-xs sm:text-sm font-semibold text-black shadow-[0px_2px_0px_0px_var(--color-neutral-50)_inset,0px_0.5px_1px_0px_var(--color-neutral-400)] transition-all duration-100 active:scale-98 flex items-center gap-2"
               >
                 <span>See my Blogs</span>
@@ -250,7 +254,7 @@ export default function Hero() {
       {/* User Image: Grounded at bottom of screen, positioned to the left, behind bottom controls */}
       <div
         ref={imageRef}
-        className="absolute bottom-0 left-[24%] sm:left-[28%] md:left-[32%] -translate-x-1/2 z-20 w-[90vw] max-w-[380px] sm:max-w-[460px] md:max-w-[540px] lg:max-w-[620px] xl:max-w-[660px] h-[68vh] sm:h-[75vh] md:h-[78vh] lg:h-[80vh] flex items-end justify-center pointer-events-none"
+        className="absolute bottom-0 left-[24%] sm:left-[28%] md:left-[32%] -translate-x-1/2 z-20 w-[90vw] max-w-[380px] sm:max-w-[460px] md:max-w-[540px] lg:max-w-[620px] xl:max-w-[660px] h-[68vh] sm:h-[75vh] md:h-[78vh] lg:h-[80vh] flex items-end justify-center pointer-events-none will-change-transform"
       >
         <div className="relative w-full h-full">
           <Image
@@ -296,52 +300,8 @@ export default function Hero() {
           <ArrowDown className="w-4 h-4 text-[#141b16]" />
         </button>
 
-        {/* Bottom Center: Floating Pill Navigation */}
-        <nav
-          ref={bottomNavRef}
-          aria-label="Main Navigation"
-          className="bg-white/95 backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.08)] border border-black/5 rounded-full p-1.5 flex items-center gap-1 sm:gap-2 transition-all duration-300"
-        >
-          <button
-            type="button"
-            onClick={() => setActiveTab("HOME")}
-            className={`px-5 sm:px-6 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-              activeTab === "HOME"
-                ? "bg-[#c5eb35] text-[#141b16] shadow-sm scale-[1.02]"
-                : "text-[#5a625b] hover:text-[#141b16] hover:bg-black/5"
-            }`}
-          >
-            HOME
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("WORKS")}
-            className={`px-5 sm:px-6 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-              activeTab === "WORKS"
-                ? "bg-[#c5eb35] text-[#141b16] shadow-sm scale-[1.02]"
-                : "text-[#5a625b] hover:text-[#141b16] hover:bg-black/5"
-            }`}
-          >
-            WORKS
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTab("ABOUT");
-              window.scrollTo({
-                top: window.innerHeight,
-                behavior: "smooth",
-              });
-            }}
-            className={`px-5 sm:px-6 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-              activeTab === "ABOUT"
-                ? "bg-[#c5eb35] text-[#141b16] shadow-sm scale-[1.02]"
-                : "text-[#5a625b] hover:text-[#141b16] hover:bg-black/5"
-            }`}
-          >
-            ABOUT
-          </button>
-        </nav>
+        {/* Spacer */}
+        <div className="flex-1" />
 
         {/* Bottom Right: Social Icons Matching Reference */}
         <div

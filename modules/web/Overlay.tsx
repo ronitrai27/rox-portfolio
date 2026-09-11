@@ -1,6 +1,6 @@
 "use client";
 
-import React, { forwardRef, useEffect, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -104,17 +104,16 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
     const sectionRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
 
-    // Projects elements
-    const projectsStageRef = useRef<HTMLDivElement>(null);
+    // Projects & Curtain Lift elements
+    const stageContainerRef = useRef<HTMLDivElement>(null);
+    const projectsPanelRef = useRef<HTMLDivElement>(null);
     const stageBgRef = useRef<HTMLDivElement>(null);
     const projectsTitleRef = useRef<HTMLHeadingElement>(null);
     const projectsSubtitleRef = useRef<HTMLParagraphElement>(null);
     const cardsTrackRef = useRef<HTMLDivElement>(null);
 
-    const [activeTab, setActiveTab] = useState<"HOME" | "WORKS" | "ABOUT">(
-      "ABOUT",
-    );
-    const [quickInfoOpen, setQuickInfoOpen] = useState<boolean>(false);
+    // Achievements underlying element
+    const achievementsRef = useRef<HTMLDivElement>(null);
 
     // Combine forwarded ref and internal ref
     const setRefs = (node: HTMLDivElement | null) => {
@@ -135,7 +134,7 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
       }
     }, []);
 
-    // 1. GSAP animation: About Me text highlights line by line (100% PRESERVED)
+    // 1. GSAP animation: About Me text highlights line by line
     useGSAP(
       () => {
         if (!sectionRef.current) return;
@@ -242,21 +241,24 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
       { scope: sectionRef },
     );
 
-    // 2. GSAP animation: Projects Stage below video
+    // 2. GSAP animation: Pinned Projects Stage + Curtain Lift to reveal Achievements
     // - Pinned on scroll
-    // - Background transitions from green #123826 to white #eaeae8
-    // - "Projects" changes from white to Lemon green #96cc14 and STAYS IN CENTER
-    // - As user scrolls more: project cards glide in from the right side ONE BY ONE on scroll only!
+    // - Phase 1: Background transitions from green #123826 to light grey #eaeae8
+    // - Phase 2: Project cards glide in horizontally from right side
+    // - Phase 3 (Curtain Lift): Entire Projects panel glides UPWARD (yPercent: -100),
+    //   unmasking the underlying green Achievements section that was sitting there all along!
     useGSAP(
       () => {
         if (
-          !projectsStageRef.current ||
+          !stageContainerRef.current ||
+          !projectsPanelRef.current ||
           !cardsTrackRef.current ||
           !stageBgRef.current
         )
           return;
 
-        const stage = projectsStageRef.current;
+        const stage = stageContainerRef.current;
+        const panel = projectsPanelRef.current;
         const bg = stageBgRef.current;
         const track = cardsTrackRef.current;
         const title = projectsTitleRef.current;
@@ -266,38 +268,29 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
         gsap.set(bg, { backgroundColor: "#123826" });
         gsap.set(title, { color: "#ffffff", autoAlpha: 1 });
         gsap.set(subtitle, { color: "rgba(255, 255, 255, 0.7)" });
+        gsap.set(panel, { yPercent: 0 });
 
-        // Cards start COMPLETELY OFF-SCREEN TO THE RIGHT
+        // Cards start off-screen to the right
         gsap.set(track, {
           x: () => window.innerWidth + 80,
         });
 
         // Master pinned scrubbed timeline
-        const projectsTl = gsap.timeline({
+        const masterTl = gsap.timeline({
           scrollTrigger: {
             trigger: stage,
             start: "top top",
-            end: "+=3400",
+            end: "+=4600",
             pin: true,
             scrub: 1,
             anticipatePin: 1,
             invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              if (self.progress > 0.08) {
-                setActiveTab("WORKS");
-              } else {
-                setActiveTab("ABOUT");
-              }
-            },
           },
         });
 
-        // PHASE 1 (0 -> 1.0):
-        // As user scrolls more from the centered white Projects on green:
-        // - Background changes to white (#eaeae8)
-        // - "Projects" text changes to Lemon green (#96cc14)
-        // - "Projects" STAYS in the center! (y is NOT moved)
-        projectsTl.to(
+        // PHASE 1 (0 -> 1.0): Color Shift
+        // Background changes to light grey (#eaeae8), "Projects" turns Lemon green (#96cc14)
+        masterTl.to(
           bg,
           {
             backgroundColor: "#eaeae8",
@@ -307,33 +300,31 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
           "colorShift",
         );
 
-        projectsTl.to(
+        masterTl.to(
           title,
           {
-            color: "#96cc14", // Vibrant Lemon Green
+            color: "#96cc14",
             duration: 1.0,
             ease: "power2.inOut",
           },
           "colorShift",
         );
 
-        projectsTl.to(
+        masterTl.to(
           subtitle,
           {
-            color: "#383f3a", // Charcoal subtitle matching reference
+            color: "#383f3a",
             duration: 0.8,
             ease: "power2.inOut",
           },
           "colorShift",
         );
 
-        // Hold briefly so user sees the centered Lemon green "Projects" on white
-        projectsTl.to({}, { duration: 0.3 });
+        // Hold briefly so user sees centered Lemon green Projects
+        masterTl.to({}, { duration: 0.3 });
 
-        // PHASE 2 (1.3 -> 5.0):
-        // Projects cards glide in from the right side ONE BY ONE strictly on scroll!
-        // Ease must be "none" for 1:1 scroll responsiveness
-        projectsTl.to(
+        // PHASE 2 (1.3 -> 5.0): Horizontal Project Cards Slide Across
+        masterTl.to(
           track,
           {
             x: () => {
@@ -347,34 +338,42 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
           ">",
         );
 
+        // Hold cards briefly
+        masterTl.to({}, { duration: 0.4 });
+
+        // PHASE 3 (5.4 -> 7.2): CURTAIN LIFT OVERLAY TRANSITION
+        // As you scroll further, the Projects panel glides UPWARD off the screen,
+        // perfectly uncovering the green Achievements page resting underneath!
+        masterTl.to(
+          panel,
+          {
+            yPercent: -100,
+            duration: 1.8,
+            ease: "power1.inOut",
+          },
+          ">",
+        );
+
         // Trigger refresh after setup
         ScrollTrigger.refresh();
       },
       { scope: sectionRef },
     );
 
-    const handleNavClick = (tab: "HOME" | "WORKS" | "ABOUT") => {
-      setActiveTab(tab);
-      if (tab === "HOME") {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } else if (tab === "ABOUT") {
-        sectionRef.current?.scrollIntoView({ behavior: "smooth" });
-      } else if (tab === "WORKS") {
-        projectsStageRef.current?.scrollIntoView({ behavior: "smooth" });
-      }
-    };
-
     return (
       <section
         ref={setRefs}
-        aria-label="Overlay Section — About & Projects"
+        aria-label="Overlay Section — About, Projects & Achievements"
         className={`relative w-full bg-[#123826] text-white select-none ${className}`}
       >
         {/* ==================================================================== */}
-        {/* STAGE 1: ABOUT ME & VIDEO CAPSULE (100% PRESERVED CONTENT & DESIGN)  */}
+        {/* STAGE 1: ABOUT ME & VIDEO CAPSULE (NO ROUNDED TOP CORNERS)           */}
         {/* ==================================================================== */}
-        <div className="relative min-h-screen w-full flex flex-col justify-between items-center px-4 sm:px-6 md:px-12 py-12 sm:py-16 md:py-20 rounded-t-[36px] sm:rounded-t-[48px] shadow-[0_-30px_70px_rgba(0,0,0,0.55)] overflow-hidden bg-[#123826]">
-          {/* Subtle radial emerald background ambient glow that fades completely before the bottom */}
+        <div
+          id="about-section"
+          className="relative min-h-screen w-full flex flex-col justify-between items-center px-4 sm:px-6 md:px-12 py-12 sm:py-16 md:py-20 shadow-[0_-30px_70px_rgba(0,0,0,0.55)] overflow-hidden bg-[#123826] rounded-t-none z-20"
+        >
+          {/* Subtle radial emerald background ambient glow */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
@@ -394,14 +393,12 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
               <span className="font-sans text-sm tracking-wide">ABOUT ME</span>
             </div>
 
-            {/* 1. Center Bold Big About Me (Exact 5 Lines) */}
+            {/* Center Bold Big About Me */}
             <h1 className="font-sans font-normal tracking-tight text-2xl sm:text-4xl md:text-[2.75rem] lg:text-[3.25rem] xl:text-[3.6rem] leading-[1.12] sm:leading-[1.16] text-center max-w-5xl mx-auto flex flex-col items-center">
-              {/* Line 1 */}
               <span className="overlay-headline-line block transition-colors duration-300">
                 I am ROX, an experienced
               </span>
 
-              {/* Line 2 with elegant editorial serif italic accent matching Image 2 */}
               <span className="overlay-headline-line block transition-colors duration-300">
                 <span className="font-serif italic font-normal text-inherit tracking-normal px-1">
                   Full-Stack AI Engineer
@@ -409,17 +406,14 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
                 who
               </span>
 
-              {/* Line 3 */}
               <span className="overlay-headline-line block transition-colors duration-300">
                 architects intelligent systems,
               </span>
 
-              {/* Line 4 */}
               <span className="overlay-headline-line block transition-colors duration-300">
                 builds at scale, ships relentlessly,
               </span>
 
-              {/* Line 5 */}
               <span className="overlay-headline-line block transition-colors duration-300">
                 breaks boundaries, and builds again.
               </span>
@@ -429,8 +423,8 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
             <p className="overlay-subtext font-sans text-xs sm:text-sm md:text-[15px] lg:text-base text-neutral-300 font-normal max-w-2xl sm:max-w-3xl mx-auto leading-relaxed mt-6 sm:mt-12 px-4">
               I work across AI/ML, LLMs, RAG, multi-agent systems, MCP,
               distributed architectures, cloud infrastructure, and full-stack
-              engineering — turning ambitious ideas into production-grade systems
-              built to scale.
+              engineering — turning ambitious ideas into production-grade
+              systems built to scale.
             </p>
           </div>
 
@@ -473,251 +467,135 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
         </div>
 
         {/* ==================================================================== */}
-        {/* STAGE 2: PROJECTS BELOW VIDEO (EXTENDED INSIDE SAME OVERLAY)          */}
-        {/* "Projects" stays in center, turns Lemon green, cards come from right  */}
+        {/* STAGE 2 & 3 PINNED CONTAINER: PROJECTS WITH CURTAIN LIFT REVEAL     */}
         {/* ==================================================================== */}
         <div
-          ref={projectsStageRef}
-          className="relative w-full h-screen overflow-hidden flex items-center justify-center select-none"
+          ref={stageContainerRef}
+          id="works-stage"
+          className="relative w-full h-screen overflow-hidden select-none z-20"
         >
-          {/* Stage Background: transitions from #123826 to #eaeae8 */}
+          {/* Layer 0 (Underneath): Pure Green Achievements Section */}
           <div
-            ref={stageBgRef}
-            className="absolute inset-0 w-full h-full will-change-[background-color]"
-            style={{ backgroundColor: "#123826" }}
-          />
-
-          {/* Film grain noise overlay */}
-          <div className="absolute inset-0 bg-noise opacity-10 pointer-events-none mix-blend-overlay" />
-
-          {/* Centered "Projects" & "Recent works" — STAYS IN CENTER! */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 px-4 text-center">
-            <h2
-              ref={projectsTitleRef}
-              className="font-sans font-medium tracking-tight text-6xl sm:text-7xl md:text-8xl lg:text-[7.5rem] leading-none will-change-[color]"
-            >
-              Projects
-            </h2>
-            <p
-              ref={projectsSubtitleRef}
-              className="font-sans text-base sm:text-xl md:text-2xl font-normal tracking-tight mt-3 sm:mt-4 will-change-[color]"
-            >
-              Recent works
-            </p>
-          </div>
-
-          {/* Horizontal Project Photo Cards: Starts offscreen to the right, glides across on scroll */}
-          <div
-            ref={cardsTrackRef}
-            className="absolute top-1/2 -translate-y-1/2 left-0 flex items-center gap-6 sm:gap-8 md:gap-10 pl-8 pr-16 z-20 will-change-transform"
+            ref={achievementsRef}
+            id="achieve-section"
+            aria-label="Achievements Section"
+            className="absolute inset-0 w-full h-full bg-[#123826] overflow-hidden select-none z-10"
           >
-            {projectsData.map((project) => (
-              <article
-                key={project.id}
-                className="group relative flex-shrink-0 w-[290px] sm:w-[350px] md:w-[410px] lg:w-[440px] h-[430px] sm:h-[500px] md:h-[550px] rounded-[28px] sm:rounded-[36px] overflow-hidden bg-neutral-900 shadow-[0_22px_60px_rgba(0,0,0,0.18)] border border-black/10 transition-all duration-500 hover:shadow-[0_30px_70px_rgba(0,0,0,0.28)] hover:-translate-y-2 cursor-pointer will-change-transform"
-              >
-                {/* Project Image */}
-                <div className="relative w-full h-full overflow-hidden">
-                  <img
-                    src={project.imageUrl}
-                    alt={project.title}
-                    loading="lazy"
-                    className="w-full h-full object-cover object-center group-hover:scale-106 transition-transform duration-700 ease-out brightness-[0.96] contrast-[1.04]"
-                  />
-
-                  {/* Gradient Scrim for Top & Bottom Metadata */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/40 pointer-events-none" />
-
-                  {/* Top Tag & Number */}
-                  <div className="absolute top-5 left-5 right-5 flex justify-between items-center z-10">
-                    <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/15 text-[11px] font-sans font-semibold tracking-wider text-white uppercase">
-                      {project.tag}
-                    </span>
-
-                    <span className="font-mono text-xs font-medium text-white/80 tracking-widest">
-                      {project.number}
-                    </span>
-                  </div>
-
-                  {/* Bottom Card Content */}
-                  <div className="absolute bottom-6 left-6 right-6 z-10 flex flex-col gap-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[12px] font-sans font-medium text-[#c5eb35] tracking-wide uppercase">
-                        {project.category}
-                      </span>
-
-                      {/* External arrow button */}
-                      <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md border border-white/20 flex items-center justify-center text-white group-hover:bg-[#c5eb35] group-hover:text-black group-hover:rotate-45 transition-all duration-300">
-                        <ArrowUpRight className="w-4 h-4" />
-                      </div>
-                    </div>
-
-                    <h3 className="font-sans font-semibold text-xl sm:text-2xl text-white tracking-tight leading-tight">
-                      {project.title}
-                    </h3>
-
-                    <p className="font-sans text-xs sm:text-sm text-neutral-300 line-clamp-2 leading-relaxed mt-1">
-                      {project.description}
-                    </p>
-
-                    {/* Tech Pills */}
-                    <div className="flex items-center gap-1.5 mt-2">
-                      {project.tech.map((t) => (
-                        <span
-                          key={t}
-                          className="px-2 py-0.5 rounded-md bg-white/10 text-[10px] font-mono text-neutral-200"
-                        >
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-
-          {/* Floating Quick Info Tab on Right Screen Edge (Matching Image 3) */}
-          <aside
-            aria-label="Quick Info"
-            onClick={() => setQuickInfoOpen((prev) => !prev)}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-40 bg-white/95 backdrop-blur-md border-l border-y border-black/10 py-3.5 px-2 rounded-l-xl shadow-lg flex items-center gap-1.5 cursor-pointer hover:bg-white hover:scale-102 transition-all duration-300 group"
-          >
-            <span className="w-1.5 h-6 rounded-full bg-[#c5eb35] mr-1" />
-            <span
-              className="font-sans text-[11px] font-semibold tracking-wider text-neutral-700 group-hover:text-black uppercase whitespace-nowrap"
-              style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
-            >
-              Quick info
-            </span>
-          </aside>
-
-          {/* Quick Info Drawer Modal */}
-          {quickInfoOpen && (
+            {/* Subtle radial emerald background glow */}
             <div
-              role="dialog"
-              aria-modal="true"
-              className="fixed inset-0 z-50 flex items-center justify-end bg-black/40 backdrop-blur-xs transition-opacity"
-              onClick={() => setQuickInfoOpen(false)}
-            >
-              <div
-                className="w-full max-w-sm h-full bg-[#eaeae8] p-8 shadow-2xl flex flex-col justify-between"
-                onClick={(e) => e.stopPropagation()}
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(ellipse 80% 50% at 50% 50%, rgba(34, 110, 72, 0.45) 0%, rgba(18, 56, 38, 0.95) 80%, #0d2e1f 100%)",
+              }}
+            />
+
+            {/* Film grain noise overlay */}
+            <div className="absolute inset-0 bg-noise opacity-15 pointer-events-none mix-blend-overlay" />
+          </div>
+
+          {/* Layer 1 (On Top): Projects Panel — Slides UPWARD on scroll! */}
+          <div
+            ref={projectsPanelRef}
+            className="absolute inset-0 w-full h-full z-20 overflow-hidden rounded-b-[40px] sm:rounded-b-[56px] shadow-[0_40px_100px_rgba(0,0,0,0.65)] will-change-transform"
+          >
+            {/* Stage Background: transitions from #123826 to #eaeae8 */}
+            <div
+              ref={stageBgRef}
+              className="absolute inset-0 w-full h-full will-change-[background-color]"
+              style={{ backgroundColor: "#123826" }}
+            />
+
+            {/* Film grain noise overlay */}
+            <div className="absolute inset-0 bg-noise opacity-10 pointer-events-none mix-blend-overlay" />
+
+            {/* Centered "Projects" & "Recent works" */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 px-4 text-center">
+              <h2
+                ref={projectsTitleRef}
+                className="font-sans font-medium tracking-tight text-6xl sm:text-7xl md:text-8xl lg:text-[7.5rem] leading-none will-change-[color]"
               >
-                <div>
-                  <div className="flex items-center justify-between border-b border-black/10 pb-4">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#c5eb35]" />
-                      <h4 className="font-sans font-bold text-sm tracking-wider uppercase text-black">
-                        Quick Info
-                      </h4>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setQuickInfoOpen(false)}
-                      className="text-xs font-semibold uppercase px-3 py-1 rounded-full bg-black/5 hover:bg-black/10 cursor-pointer text-black"
-                    >
-                      Close
-                    </button>
-                  </div>
+                Projects
+              </h2>
+              <p
+                ref={projectsSubtitleRef}
+                className="font-sans text-base sm:text-xl md:text-2xl font-normal tracking-tight mt-3 sm:mt-4 will-change-[color]"
+              >
+                Recent works
+              </p>
+            </div>
 
-                  <div className="mt-8 space-y-6">
-                    <div>
-                      <span className="font-mono text-xs text-neutral-500 uppercase">
-                        Role
+            {/* Horizontal Project Photo Cards */}
+            <div
+              ref={cardsTrackRef}
+              className="absolute top-1/2 -translate-y-1/2 left-0 flex items-center gap-6 sm:gap-8 md:gap-10 pl-8 pr-16 z-20 will-change-transform"
+            >
+              {projectsData.map((project) => (
+                <article
+                  key={project.id}
+                  className="group relative flex-shrink-0 w-[290px] sm:w-[350px] md:w-[410px] lg:w-[440px] h-[430px] sm:h-[500px] md:h-[550px] rounded-[28px] sm:rounded-[36px] overflow-hidden bg-neutral-900 shadow-[0_22px_60px_rgba(0,0,0,0.18)] border border-black/10 transition-all duration-500 hover:shadow-[0_30px_70px_rgba(0,0,0,0.28)] hover:-translate-y-2 cursor-pointer will-change-transform"
+                >
+                  {/* Project Image */}
+                  <div className="relative w-full h-full overflow-hidden">
+                    <img
+                      src={project.imageUrl}
+                      alt={project.title}
+                      loading="lazy"
+                      className="w-full h-full object-cover object-center group-hover:scale-106 transition-transform duration-700 ease-out brightness-[0.96] contrast-[1.04]"
+                    />
+
+                    {/* Gradient Scrim for Top & Bottom Metadata */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/40 pointer-events-none" />
+
+                    {/* Top Tag & Number */}
+                    <div className="absolute top-5 left-5 right-5 flex justify-between items-center z-10">
+                      <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/15 text-[11px] font-sans font-semibold tracking-wider text-white uppercase">
+                        {project.tag}
                       </span>
-                      <p className="font-sans font-semibold text-lg text-black mt-1">
-                        Full-Stack AI Engineer & Builder
-                      </p>
+
+                      <span className="font-mono text-xs font-medium text-white/80 tracking-widest">
+                        {project.number}
+                      </span>
                     </div>
 
-                    <div>
-                      <span className="font-mono text-xs text-neutral-500 uppercase">
-                        Core Focus
-                      </span>
-                      <p className="font-sans text-sm text-neutral-700 mt-1 leading-relaxed">
-                        AI/ML, Multi-Agent Architecture, Distributed Systems, Cloud
-                        Infrastructure, Interactive Web.
-                      </p>
-                    </div>
-
-                    <div>
-                      <span className="font-mono text-xs text-neutral-500 uppercase">
-                        Availability
-                      </span>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="w-2 h-2 rounded-full bg-[#c5eb35] animate-pulse" />
-                        <span className="font-sans text-sm font-medium text-black">
-                          Open for Select High-Impact Roles & Projects
+                    {/* Bottom Card Content */}
+                    <div className="absolute bottom-6 left-6 right-6 z-10 flex flex-col gap-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[12px] font-sans font-medium text-[#c5eb35] tracking-wide uppercase">
+                          {project.category}
                         </span>
+
+                        {/* External arrow button */}
+                        <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md border border-white/20 flex items-center justify-center text-white group-hover:bg-[#c5eb35] group-hover:text-black group-hover:rotate-45 transition-all duration-300">
+                          <ArrowUpRight className="w-4 h-4" />
+                        </div>
+                      </div>
+
+                      <h3 className="font-sans font-semibold text-xl sm:text-2xl text-white tracking-tight leading-tight">
+                        {project.title}
+                      </h3>
+
+                      <p className="font-sans text-xs sm:text-sm text-neutral-300 line-clamp-2 leading-relaxed mt-1">
+                        {project.description}
+                      </p>
+
+                      {/* Tech Pills */}
+                      <div className="flex items-center gap-1.5 mt-2">
+                        {project.tech.map((t) => (
+                          <span
+                            key={t}
+                            className="px-2 py-0.5 rounded-md bg-white/10 text-[10px] font-mono text-neutral-200"
+                          >
+                            {t}
+                          </span>
+                        ))}
                       </div>
                     </div>
-
-                    <div>
-                      <span className="font-mono text-xs text-neutral-500 uppercase">
-                        Location
-                      </span>
-                      <p className="font-sans text-sm font-medium text-black mt-1">
-                        Global / Remote
-                      </p>
-                    </div>
                   </div>
-                </div>
-
-                <div className="border-t border-black/10 pt-4">
-                  <a
-                    href="mailto:contact@rox.ai"
-                    className="w-full py-3 rounded-full bg-[#c5eb35] hover:bg-[#b8e528] text-black font-sans font-semibold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
-                  >
-                    <span>Initiate Contact</span>
-                    <ArrowUpRight className="w-4 h-4" />
-                  </a>
-                </div>
-              </div>
+                </article>
+              ))}
             </div>
-          )}
-
-          {/* Floating Bottom Navigation Bar (Exact Match to Image 2 & 3) */}
-          <nav
-            aria-label="Main Navigation"
-            className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 bg-white/95 backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.12)] border border-black/8 rounded-full p-1.5 flex items-center gap-1 sm:gap-2 transition-all duration-300"
-          >
-            <button
-              type="button"
-              onClick={() => handleNavClick("HOME")}
-              className={`px-5 sm:px-6 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-                activeTab === "HOME"
-                  ? "bg-[#c5eb35] text-[#141b16] shadow-sm scale-[1.02]"
-                  : "text-[#5a625b] hover:text-[#141b16] hover:bg-black/5"
-              }`}
-            >
-              HOME
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleNavClick("WORKS")}
-              className={`px-5 sm:px-6 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-                activeTab === "WORKS"
-                  ? "bg-[#c5eb35] text-[#141b16] shadow-sm scale-[1.02]"
-                  : "text-[#5a625b] hover:text-[#141b16] hover:bg-black/5"
-              }`}
-            >
-              WORKS
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleNavClick("ABOUT")}
-              className={`px-5 sm:px-6 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-                activeTab === "ABOUT"
-                  ? "bg-[#c5eb35] text-[#141b16] shadow-sm scale-[1.02]"
-                  : "text-[#5a625b] hover:text-[#141b16] hover:bg-black/5"
-              }`}
-            >
-              ABOUT
-            </button>
-          </nav>
+          </div>
         </div>
       </section>
     );
