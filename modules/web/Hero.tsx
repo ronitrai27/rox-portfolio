@@ -67,7 +67,7 @@ export default function Hero({ isLoaded = false }: HeroProps) {
           "ROX works with Next.js, React, TypeScript, Python, PyTorch, LangGraph, GSAP, Tailwind CSS, Three.js, and multi-agent workflows.";
       } else if (lower.includes("project") || lower.includes("work")) {
         reply =
-          "ROX's top projects include Pegasus Solar, Ovula Design System, Aether AI Assistant, and Cognitive Swarm OS. Check out the Works page for more details!";
+          "ROX's top projects include wekraft, clarioo, looma, Aria, Enterprise sales agent, and vocalx. Check out the Works page for more details!";
       } else if (
         lower.includes("contact") ||
         lower.includes("email") ||

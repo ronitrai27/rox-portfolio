@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import React, { useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -11,9 +12,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 interface ProjectItem {
   id: string;
   number: string;
-  tag: string;
   title: string;
-  category: string;
   imageUrl: string;
   description: string;
   tech: string[];
@@ -21,76 +20,58 @@ interface ProjectItem {
 
 const projectsData: ProjectItem[] = [
   {
-    id: "project-1",
+    id: "wekraft",
     number: "01",
-    tag: "MOBILE APP",
-    title: "Aether AI Assistant",
-    category: "Intelligent Interface",
-    imageUrl:
-      "https://images.unsplash.com/photo-1556656793-08538906a9f8?auto=format&fit=crop&w=1000&q=80",
+    title: "wekraft",
+    imageUrl: "/wekraft.png",
     description:
-      "Voice-first multimodal agent interface for next-generation mobile interactions.",
-    tech: ["Next.js", "WebRTC", "LLMs"],
+      "AI project execution platform for DEV and PM . Bidirectional Github sync with third party MCP connections.",
+    tech: ["LangGraph", "MCP", "Ably"],
   },
   {
-    id: "project-2",
+    id: "clarioo",
     number: "02",
-    tag: "3D HARDWARE",
-    title: "Edition Spatial Canvas",
-    category: "Hardware & Platform",
-    imageUrl:
-      "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1000&q=80",
+    title: "clarioo",
+    imageUrl: "/clarioo.png",
     description:
-      "Minimalist studio architecture and precision industrial workstation platform.",
-    tech: ["Three.js", "WebGL", "Rust"],
+      "personaliuzed career platform . Building for induian education from roadmaps to mock proctored interviews.",
+    tech: ["Next.js", "Vapi", "Supabase"],
   },
   {
-    id: "project-3",
+    id: "looma",
     number: "03",
-    tag: "EDITORIAL",
-    title: "Ovula Design System",
-    category: "Brand & Identity",
-    imageUrl:
-      "https://images.unsplash.com/photo-1509967419530-da38b4704bc6?auto=format&fit=crop&w=1000&q=80",
+    title: "looma",
+    imageUrl: "/looma.png",
     description:
-      "Contemporary editorial aesthetic, typography guidelines, and fluid web experiences.",
-    tech: ["GSAP", "Tailwind", "Figma"],
+      "Sketch , collaborate , deploy , live whiteboard to bring your team , draw anything and turn that into a live product.",
+    tech: ["Vercel AI", "Firecrawl", "Liveblocks"],
   },
   {
-    id: "project-4",
+    id: "aria",
     number: "04",
-    tag: "AI WORKSPACE",
-    title: "Cognitive Swarm OS",
-    category: "Multi-Agent System",
-    imageUrl:
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80",
+    title: "Aria",
+    imageUrl: "/aria.png",
     description:
-      "Autonomous collaborative AI agents executing distributed workflows in real-time.",
-    tech: ["Python", "MCP", "LangGraph"],
+      "Personal productivity platform , build automated workflows , conenct with gmail , slack , discord , work apss and more. turn chaos into actionable work.",
+    tech: ["LangGraph", "FastAPI", "Composio"],
   },
   {
-    id: "project-5",
+    id: "enterprise-sales-agent",
     number: "05",
-    tag: "SPATIAL CANVAS",
-    title: "Sanctuary Architecture",
-    category: "Spatial Environment",
-    imageUrl:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80",
+    title: "Enterprise sales agent",
+    imageUrl: "/pan-agent.png",
     description:
-      "Modernist concrete sanctuary studio designed for deep focus and digital craftsmanship.",
-    tech: ["ArchViz", "Blender", "Unreal"],
+      "Enterprise grade bilingual sales agent from guardrails , semantic cache to background jobs and long term meory.",
+    tech: ["LangGraph", "Hybrid RAG", "Temporal.io"],
   },
   {
-    id: "project-6",
+    id: "vocalx",
     number: "06",
-    tag: "NEURAL STUDIO",
-    title: "Vortex Generative Engine",
-    category: "Creative Computation",
-    imageUrl:
-      "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1000&q=80",
+    title: "vocalx",
+    imageUrl: "/vocalx.png",
     description:
-      "Diffusion models pipeline streaming dynamic generative branding in real-time.",
-    tech: ["PyTorch", "CUDA", "FastAPI"],
+      "simplifying hr interview , crwate job role , jd and let AI do its magic , from ques creation to proctored online live interviews with feedback.",
+    tech: ["Vapi", "Next.js 16", "React 19"],
   },
 ];
 
@@ -356,63 +337,53 @@ const ProjectsSection = React.forwardRef<HTMLDivElement, ProjectsSectionProps>(
         {/* Horizontal Cards Track: Glides in from left across the screen */}
         <div
           ref={cardsTrackRef}
-          className="absolute top-1/2 -translate-y-1/2 left-0 flex items-center gap-6 sm:gap-8 md:gap-10 pl-[8vw] pr-[16vw] z-20 will-change-transform"
+          className="absolute top-1/2 -translate-y-1/2 left-0 flex items-center gap-6 sm:gap-8 md:gap-9 pl-[8vw] pr-[16vw] z-20 will-change-transform"
         >
           {projectsData.map((project) => (
-            <article
+            <Link
               key={project.id}
-              className="project-card group relative flex-shrink-0 w-[290px] sm:w-[350px] md:w-[410px] lg:w-[440px] h-[430px] sm:h-[500px] md:h-[550px] rounded-[28px] sm:rounded-[36px] overflow-hidden bg-neutral-900 shadow-[0_22px_60px_rgba(0,0,0,0.18)] border border-black/10 transition-all duration-500 hover:shadow-[0_30px_70px_rgba(0,0,0,0.28)] hover:-translate-y-2 cursor-pointer will-change-transform"
+              href="/work"
+              className="project-card group relative flex-shrink-0 w-[300px] sm:w-[390px] md:w-[470px] lg:w-[530px] xl:w-[560px] h-[230px] sm:h-[285px] md:h-[335px] lg:h-[365px] rounded-2xl sm:rounded-3xl overflow-hidden bg-transparent shadow-[0_16px_45px_rgba(0,0,0,0.12)] border border-black/10 transition-all duration-500 hover:shadow-[0_24px_55px_rgba(0,0,0,0.22)] hover:-translate-y-1.5 cursor-pointer will-change-transform block"
             >
-              {/* Project Image */}
-              <div className="relative w-full h-full overflow-hidden">
+              {/* Project Screenshot — Clean & Natural */}
+              <div className="relative w-full h-full overflow-hidden bg-neutral-100">
                 <img
                   src={project.imageUrl}
                   alt={project.title}
                   loading="lazy"
-                  className="w-full h-full object-cover object-center group-hover:scale-106 transition-transform duration-700 ease-out brightness-[0.96] contrast-[1.04]"
+                  className="w-full h-full object-cover object-top group-hover:scale-104 transition-transform duration-700 ease-out"
                 />
 
-                {/* Gradient Scrim for Top & Bottom Metadata */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/40 pointer-events-none" />
+                {/* Subtle bottom-only shade strictly to make text readable */}
+                <div className="absolute bottom-0 inset-x-0 h-32 sm:h-40 md:h-44 bg-gradient-to-t from-black/90 via-black/45 to-transparent pointer-events-none" />
 
-                {/* Top Tag & Number */}
-                <div className="absolute top-5 left-5 right-5 flex justify-between items-center z-10">
-                  <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/15 text-[11px] font-sans font-semibold tracking-wider text-white uppercase">
-                    {project.tag}
-                  </span>
-
-                  <span className="font-mono text-xs font-medium text-white/80 tracking-widest">
+                {/* Top Number & External Arrow with Frosted Glass Badges */}
+                <div className="absolute top-3.5 sm:top-4 left-3.5 sm:left-4 right-3.5 sm:right-4 flex justify-between items-center z-10">
+                  <span className="px-2.5 py-0.5 rounded-full bg-black/35 backdrop-blur-md border border-white/20 text-[11px] sm:text-xs font-mono font-medium text-white tracking-widest shadow-xs">
                     {project.number}
                   </span>
+
+                  <div className="w-8 h-8 rounded-full bg-black/35 backdrop-blur-md border border-white/20 flex items-center justify-center text-white group-hover:bg-[#c5eb35] group-hover:text-black group-hover:rotate-45 transition-all duration-300 shadow-xs">
+                    <ArrowUpRight className="w-4 h-4" />
+                  </div>
                 </div>
 
-                {/* Bottom Card Content */}
-                <div className="absolute bottom-6 left-6 right-6 z-10 flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-sans font-medium text-[#c5eb35] tracking-wide uppercase">
-                      {project.category}
-                    </span>
-
-                    {/* External arrow button */}
-                    <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md border border-white/20 flex items-center justify-center text-white group-hover:bg-[#c5eb35] group-hover:text-black group-hover:rotate-45 transition-all duration-300">
-                      <ArrowUpRight className="w-4 h-4" />
-                    </div>
-                  </div>
-
-                  <h3 className="font-sans font-semibold text-xl sm:text-2xl text-white tracking-tight leading-tight">
+                {/* Bottom Project Info */}
+                <div className="absolute bottom-3.5 sm:bottom-4 left-3.5 sm:left-5 right-3.5 sm:right-5 z-10 flex flex-col gap-1 sm:gap-1.5">
+                  <h3 className="font-sans font-bold text-lg sm:text-xl md:text-2xl text-white tracking-tight leading-tight drop-shadow-sm">
                     {project.title}
                   </h3>
 
-                  <p className="font-sans text-xs sm:text-sm text-neutral-300 line-clamp-2 leading-relaxed mt-1">
+                  <p className="font-sans text-xs sm:text-[13px] text-neutral-100/95 line-clamp-2 leading-relaxed drop-shadow-xs">
                     {project.description}
                   </p>
 
                   {/* Tech Pills */}
-                  <div className="flex items-center gap-1.5 mt-2">
+                  <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
                     {project.tech.map((t) => (
                       <span
                         key={t}
-                        className="px-2 py-0.5 rounded-md bg-white/10 text-[10px] font-mono text-neutral-200"
+                        className="px-2.5 py-0.5 rounded-full bg-black/40 backdrop-blur-md text-[10px] sm:text-[11px] font-mono font-medium text-white border border-white/20 shadow-xs"
                       >
                         {t}
                       </span>
@@ -420,7 +391,7 @@ const ProjectsSection = React.forwardRef<HTMLDivElement, ProjectsSectionProps>(
                   </div>
                 </div>
               </div>
-            </article>
+            </Link>
           ))}
         </div>
 

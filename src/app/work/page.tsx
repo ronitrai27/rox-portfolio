@@ -22,58 +22,58 @@ interface WorkProject {
 
 const projects: WorkProject[] = [
   {
-    id: "pegasus-solar",
+    id: "wekraft",
     number: "01",
-    title: "Pegasus Solar",
-    category: "Web design · Branding",
-    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=80",
+    title: "wekraft",
+    category: "LangGraph · MCP · Ably",
+    image: "/wekraft.png",
     alignment: "left",
-    aspectRatio: "aspect-[16/11]",
+    aspectRatio: "aspect-[16/10]",
   },
   {
-    id: "ovula",
+    id: "clarioo",
     number: "02",
-    title: "Ovula",
-    category: "Strategy · Branding",
-    image: "https://images.unsplash.com/photo-1509967419530-da38b4704bc6?auto=format&fit=crop&w=1000&q=80",
+    title: "clarioo",
+    category: "Next.js · Vapi · Supabase",
+    image: "/clarioo.png",
     alignment: "right",
-    aspectRatio: "aspect-[4/5]",
+    aspectRatio: "aspect-[16/10]",
   },
   {
-    id: "aether-ai",
+    id: "looma",
     number: "03",
-    title: "Aether AI Assistant",
-    category: "Intelligent Interface · Mobile",
-    image: "https://images.unsplash.com/photo-1556656793-08538906a9f8?auto=format&fit=crop&w=1200&q=80",
+    title: "looma",
+    category: "Vercel AI · Firecrawl · Liveblocks",
+    image: "/looma.png",
     alignment: "left",
-    aspectRatio: "aspect-[16/11]",
+    aspectRatio: "aspect-[16/10]",
   },
   {
-    id: "cognitive-swarm",
+    id: "aria",
     number: "04",
-    title: "Cognitive Swarm OS",
-    category: "Multi-Agent System · Cloud",
-    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80",
+    title: "Aria",
+    category: "LangGraph · FastAPI · Composio",
+    image: "/aria.png",
     alignment: "right",
-    aspectRatio: "aspect-[4/5]",
+    aspectRatio: "aspect-[16/10]",
   },
   {
-    id: "sanctuary-architecture",
+    id: "enterprise-sales-agent",
     number: "05",
-    title: "Sanctuary Architecture",
-    category: "Spatial Environment · 3D",
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+    title: "Enterprise sales agent",
+    category: "LangGraph · Hybrid RAG · Temporal.io",
+    image: "/pan-agent.png",
     alignment: "left",
-    aspectRatio: "aspect-[16/11]",
+    aspectRatio: "aspect-[16/10]",
   },
   {
-    id: "vortex-engine",
+    id: "vocalx",
     number: "06",
-    title: "Vortex Generative Engine",
-    category: "Creative Computation · Diffusion",
-    image: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1000&q=80",
+    title: "vocalx",
+    category: "Vapi · Next.js 16 · React 19",
+    image: "/vocalx.png",
     alignment: "right",
-    aspectRatio: "aspect-[4/5]",
+    aspectRatio: "aspect-[16/10]",
   },
 ];
 
@@ -218,8 +218,8 @@ export default function WorkPage() {
                   style={{ zIndex: 30 }}
                   className={`absolute pointer-events-auto will-change-transform ${
                     isLeft
-                      ? "left-4 sm:left-8 md:left-12 lg:left-14 bottom-16 sm:bottom-20 w-[84vw] sm:w-[380px] md:w-[460px] lg:w-[500px]"
-                      : "right-4 sm:right-8 md:right-12 lg:right-14 bottom-16 sm:bottom-20 w-[78vw] sm:w-[320px] md:w-[380px] lg:w-[410px]"
+                      ? "left-4 sm:left-8 md:left-12 lg:left-14 bottom-14 sm:bottom-20 w-[88vw] sm:w-[440px] md:w-[520px] lg:w-[580px]"
+                      : "right-4 sm:right-8 md:right-12 lg:right-14 bottom-14 sm:bottom-20 w-[88vw] sm:w-[440px] md:w-[520px] lg:w-[580px]"
                   }`}
                 >
                   <div className="group bg-white rounded-2xl sm:rounded-3xl p-2 sm:p-2.5 transition-transform duration-300 shadow-[0_12px_40px_rgba(0,0,0,0.06)] border border-black/5">
