@@ -25,7 +25,7 @@ const projectsData: ProjectItem[] = [
     title: "wekraft",
     imageUrl: "/wekraft.png",
     description:
-      "AI project execution platform for DEV and PM . Bidirectional Github sync with third party MCP connections.",
+      "AI-powered project execution platform bridging Devs & PMs with bidirectional GitHub sync and third-party MCP integrations.",
     tech: ["LangGraph", "MCP", "Ably"],
   },
   {
@@ -34,7 +34,7 @@ const projectsData: ProjectItem[] = [
     title: "clarioo",
     imageUrl: "/clarioo.png",
     description:
-      "personaliuzed career platform . Building for induian education from roadmaps to mock proctored interviews.",
+      "Personalized career acceleration platform for students & professionals, featuring tailored roadmaps and AI-proctored mock interviews.",
     tech: ["Next.js", "Vapi", "Supabase"],
   },
   {
@@ -43,7 +43,7 @@ const projectsData: ProjectItem[] = [
     title: "looma",
     imageUrl: "/looma.png",
     description:
-      "Sketch , collaborate , deploy , live whiteboard to bring your team , draw anything and turn that into a live product.",
+      "Real-time collaborative canvas enabling teams to sketch, design, and instantly generate live deployable web applications.",
     tech: ["Vercel AI", "Firecrawl", "Liveblocks"],
   },
   {
@@ -52,7 +52,7 @@ const projectsData: ProjectItem[] = [
     title: "Aria",
     imageUrl: "/aria.png",
     description:
-      "Personal productivity platform , build automated workflows , conenct with gmail , slack , discord , work apss and more. turn chaos into actionable work.",
+      "Intelligent personal productivity operating system connecting Gmail, Slack, and Discord to turn daily chaos into automated action.",
     tech: ["LangGraph", "FastAPI", "Composio"],
   },
   {
@@ -61,7 +61,7 @@ const projectsData: ProjectItem[] = [
     title: "Enterprise sales agent",
     imageUrl: "/pan-agent.png",
     description:
-      "Enterprise grade bilingual sales agent from guardrails , semantic cache to background jobs and long term meory.",
+      "Enterprise-grade bilingual sales agent architected with semantic caching, strict guardrails, background jobs, and persistent memory.",
     tech: ["LangGraph", "Hybrid RAG", "Temporal.io"],
   },
   {
@@ -70,7 +70,7 @@ const projectsData: ProjectItem[] = [
     title: "vocalx",
     imageUrl: "/vocalx.png",
     description:
-      "simplifying hr interview , crwate job role , jd and let AI do its magic , from ques creation to proctored online live interviews with feedback.",
+      "Next-gen AI recruitment engine that automates JD parsing, question generation, and real-time proctored voice interviews with analytics.",
     tech: ["Vapi", "Next.js 16", "React 19"],
   },
 ];
@@ -343,7 +343,7 @@ const ProjectsSection = React.forwardRef<HTMLDivElement, ProjectsSectionProps>(
             <Link
               key={project.id}
               href="/work"
-              className="project-card group relative flex-shrink-0 w-[300px] sm:w-[390px] md:w-[470px] lg:w-[530px] xl:w-[560px] h-[230px] sm:h-[285px] md:h-[335px] lg:h-[365px] rounded-2xl sm:rounded-3xl overflow-hidden bg-transparent shadow-[0_16px_45px_rgba(0,0,0,0.12)] border border-black/10 transition-all duration-500 hover:shadow-[0_24px_55px_rgba(0,0,0,0.22)] hover:-translate-y-1.5 cursor-pointer will-change-transform block"
+              className="project-card group relative flex-shrink-0 w-[300px] sm:w-[390px] md:w-[470px] lg:w-[580px] h-[230px] sm:h-[285px] md:h-[335px] lg:h-[375px] rounded-2xl sm:rounded-xl overflow-hidden bg-transparent shadow-[0_16px_45px_rgba(0,0,0,0.12)] border border-black/10 transition-all duration-500 hover:shadow-[0_24px_55px_rgba(0,0,0,0.22)] hover:-translate-y-1.5 cursor-pointer will-change-transform block"
             >
               {/* Project Screenshot — Clean & Natural */}
               <div className="relative w-full h-full overflow-hidden bg-neutral-100">
@@ -383,7 +383,7 @@ const ProjectsSection = React.forwardRef<HTMLDivElement, ProjectsSectionProps>(
                     {project.tech.map((t) => (
                       <span
                         key={t}
-                        className="px-2.5 py-0.5 rounded-full bg-black/40 backdrop-blur-md text-[10px] sm:text-[11px] font-mono font-medium text-white border border-white/20 shadow-xs"
+                        className="px-2.5 py-0.5 rounded-full bg-[#c5eb35] text-[10px] sm:text-[11px] font-mono  text-[#141b16] shadow-xs"
                       >
                         {t}
                       </span>
