@@ -79,12 +79,12 @@ export default function Home() {
             WORKS
           </Link>
 
-          <button
-            type="button"
+          <Link
+            href="/about"
             className="px-4 sm:px-5 py-2 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer text-[#5a625b] hover:text-[#141b16] hover:bg-black/5"
           >
             ABOUT
-          </button>
+          </Link>
         </nav>
       )}
     </main>
