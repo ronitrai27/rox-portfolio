@@ -343,7 +343,7 @@ const ProjectsSection = React.forwardRef<HTMLDivElement, ProjectsSectionProps>(
             <Link
               key={project.id}
               href="/work"
-              className="project-card group relative flex-shrink-0 w-[300px] sm:w-[390px] md:w-[470px] lg:w-[580px] h-[230px] sm:h-[285px] md:h-[335px] lg:h-[375px] rounded-2xl sm:rounded-xl overflow-hidden bg-transparent shadow-[0_16px_45px_rgba(0,0,0,0.12)] border border-black/10 transition-all duration-500 hover:shadow-[0_24px_55px_rgba(0,0,0,0.22)] hover:-translate-y-1.5 cursor-pointer will-change-transform block"
+              className="project-card group relative flex-shrink-0 w-[320px] sm:w-[420px] md:w-[510px] lg:w-[610px] xl:w-[650px] h-[260px] sm:h-[320px] md:h-[380px] lg:h-[425px] xl:h-[445px] rounded-2xl sm:rounded-xl overflow-hidden bg-transparent shadow-[0_16px_45px_rgba(0,0,0,0.12)] border border-black/10 transition-all duration-500 hover:shadow-[0_24px_55px_rgba(0,0,0,0.22)] hover:-translate-y-1.5 cursor-pointer will-change-transform block"
             >
               {/* Project Screenshot — Clean & Natural */}
               <div className="relative w-full h-full overflow-hidden bg-neutral-100">
@@ -355,7 +355,7 @@ const ProjectsSection = React.forwardRef<HTMLDivElement, ProjectsSectionProps>(
                 />
 
                 {/* Subtle bottom-only shade strictly to make text readable */}
-                <div className="absolute bottom-0 inset-x-0 h-32 sm:h-40 md:h-44 bg-gradient-to-t from-black/90 via-black/45 to-transparent pointer-events-none" />
+                <div className="absolute bottom-0 inset-x-0 h-36 sm:h-44 md:h-52 bg-gradient-to-t from-black/90 via-black/45 to-transparent pointer-events-none" />
 
                 {/* Top Number & External Arrow with Frosted Glass Badges */}
                 <div className="absolute top-3.5 sm:top-4 left-3.5 sm:left-4 right-3.5 sm:right-4 flex justify-between items-center z-10">
