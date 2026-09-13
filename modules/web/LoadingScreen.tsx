@@ -21,6 +21,19 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
 
   const fullText = "Hy I'm ROX";
 
+  // Prevent scroll and scrollbar while loading
+  useEffect(() => {
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = prevBodyOverflow;
+      document.documentElement.style.overflow = prevHtmlOverflow;
+    };
+  }, []);
+
   // Typewriter effect in center
   useEffect(() => {
     let index = 0;
@@ -101,7 +114,7 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
     <aside
       ref={containerRef}
       aria-label="Loading Screen"
-      className="fixed inset-0 z-50 w-full h-screen bg-[#c5eb35] text-[#121814] flex flex-col justify-between p-8 sm:p-12 md:p-16 select-none overflow-hidden"
+      className="fixed inset-0 z-50 w-screen h-screen bg-[#c5eb35] text-[#121814] flex flex-col justify-between p-8 sm:p-12 md:p-16 select-none overflow-hidden touch-none"
       style={{ willChange: "transform" }}
     >
       {/* Subtle background noise texture */}

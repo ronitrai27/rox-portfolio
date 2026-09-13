@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -11,10 +11,28 @@ import LoadingScreen from "../../modules/web/LoadingScreen";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
+// Module-level variable persists across client navigation but resets on page refresh (F5)
+let hasShownLoaderInSession = false;
+
 export default function Home() {
   const heroContentRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(() => !hasShownLoaderInSession);
+
+  // Lock scrolling while loading
+  useEffect(() => {
+    if (isLoading) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, [isLoading]);
 
   useGSAP(() => {
     if (!heroContentRef.current || !overlayRef.current) return;
@@ -33,14 +51,15 @@ export default function Home() {
   });
 
   const handleLoadingComplete = () => {
+    hasShownLoaderInSession = true;
     setIsLoading(false);
     ScrollTrigger.refresh();
   };
 
   return (
     <main className="relative w-full bg-[#eaeae8] text-black">
-      {/* Engaging Green Lemon Loading Screen */}
-      <LoadingScreen onComplete={handleLoadingComplete} />
+      {/* Engaging Green Lemon Loading Screen - Only on first visit */}
+      {isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
 
       {/* Sticky Hero Page */}
       <div className="sticky top-0 w-full h-screen overflow-hidden z-10 bg-[#eaeae8]">
