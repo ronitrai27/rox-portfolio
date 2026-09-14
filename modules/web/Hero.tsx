@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import {
@@ -230,21 +231,15 @@ export default function Hero({ isLoaded = false }: HeroProps) {
         </span>
 
         {/* Contact Pill Button */}
-        <button
-          type="button"
-          onClick={() => {
-            const aboutEl = document.getElementById("about-section");
-            if (aboutEl) {
-              aboutEl.scrollIntoView({ behavior: "smooth" });
-            }
-          }}
+        <Link
+          href="/contact"
           className="group bg-[#c5eb35] hover:bg-[#b5e024] text-[#141b16] font-sans font-semibold text-xs sm:text-sm px-6 py-2.5 rounded-full flex items-center gap-2 transition-all duration-300 shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
         >
           <span>Contact</span>
           <span className="w-5 h-5 rounded-full bg-black/10 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
             <ArrowUpRight className="w-3.5 h-3.5 text-[#141b16]" />
           </span>
-        </button>
+        </Link>
       </header>
 
       {/* Main Center Stage */}
