@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { forwardRef, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -83,6 +84,7 @@ const projectsData: ProjectItem[] = [
 
 const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
   ({ className = "", onVideoClick }, ref) => {
+    const router = useRouter();
     const sectionRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -411,13 +413,13 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
           </div>
 
           {/* Bottom: Wide Video Capsule */}
-          <div className="relative z-10 w-full flex flex-col items-center mt-auto pt-14 sm:pt-18 md:pt-22 pb-2 sm:pb-4">
+          <div className="relative z-30 w-full flex flex-col items-center mt-auto pt-14 sm:pt-18 md:pt-22 pb-2 sm:pb-4 pointer-events-auto">
             <div className="overlay-video-capsule-wrapper w-full flex justify-center px-2 sm:px-4">
-              <button
-                type="button"
-                onClick={onVideoClick}
-                aria-label="Know more about me reel"
-                className="group relative cursor-pointer block rounded-full p-[2px] hover:from-[#c5eb35]/90 hover:via-white/40 hover:to-[#c5eb35]/40 transition-all duration-500 w-full max-w-[720px] sm:max-w-[880px] md:max-w-[1020px] lg:max-w-[900px]"
+              <Link
+                href="/about"
+                onClick={() => router.push("/about")}
+                aria-label="Know more about me"
+                className="group relative cursor-pointer block rounded-full p-[2px] hover:from-[#c5eb35]/90 hover:via-white/40 hover:to-[#c5eb35]/40 transition-all duration-500 w-full max-w-[720px] sm:max-w-[880px] md:max-w-[1020px] lg:max-w-[900px] z-30 pointer-events-auto"
               >
                 <div className="relative w-full h-[105px] sm:h-[135px] md:h-[200px] lg:h-[245px] rounded-full overflow-hidden flex items-center justify-center">
                   <video
@@ -443,7 +445,7 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
                     </span>
                   </div>
                 </div>
-              </button>
+              </Link>
             </div>
           </div>
         </div>

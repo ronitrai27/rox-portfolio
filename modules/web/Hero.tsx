@@ -251,29 +251,29 @@ export default function Hero({ isLoaded = false }: HeroProps) {
       <div className="relative w-full h-full! z-20">
         <h1
           ref={title1Ref}
-          className="text-[112px] font-serif tracking-wider italic font-light absolute top-16 left-[40%] -translate-x-1/2 will-change-transform"
+          className="text-5xl sm:text-7xl md:text-[112px] font-serif tracking-wider italic font-light absolute top-20 sm:top-20 md:top-24 left-1/2 md:left-[40%] -translate-x-1/2 whitespace-nowrap will-change-transform"
         >
           AI ENGINEER
         </h1>
         <div
           ref={taglineRef}
-          className="absolute top-1/3 mt-14 left-1/2 will-change-transform"
+          className="absolute top-36 sm:top-40 md:top-1/3 md:mt-14 left-1/2 -translate-x-1/2 md:translate-x-0 w-full max-w-xs sm:max-w-md md:max-w-none text-center md:text-left will-change-transform px-4 md:px-0"
         >
           <h2
             ref={title2Ref}
-            className="text-7xl font-sans leading-7 tracking-tight font-semibold"
+            className="text-4xl sm:text-5xl md:text-7xl font-sans leading-tight md:leading-7 tracking-tight font-semibold"
           >
             WHO SHIPS
           </h2>
-          <p className="mt-10">
-            <span className="text-lg tracking-tight capitalize leading-0 font-sans font-medium">
+          <p className="mt-4 sm:mt-6 md:mt-10">
+            <span className="text-sm sm:text-base md:text-lg tracking-tight capitalize leading-relaxed md:leading-0 font-sans font-medium">
               code is the medium.
               <br />
               building the impossible is the point.
             </span>
           </p>
 
-          <div className="flex items-center gap-3 mt-6 ml-10">
+          <div className="flex items-center justify-center md:justify-start gap-2.5 sm:gap-3 mt-5 sm:mt-6 ml-0 md:ml-10">
             <NoiseBackground
               containerClassName="w-fit p-1 rounded-full"
               gradientColors={[
@@ -285,9 +285,9 @@ export default function Hero({ isLoaded = false }: HeroProps) {
               <a
                 href="/resume.pdf"
                 download="Ronit_Rai_Resume.pdf"
-                className="h-full w-full cursor-pointer rounded-full bg-linear-to-r from-neutral-100 via-neutral-100 to-white px-5 py-2.5 text-xs sm:text-sm font-semibold text-black shadow-[0px_2px_0px_0px_var(--color-neutral-50)_inset,0px_0.5px_1px_0px_var(--color-neutral-400)] transition-all duration-100 active:scale-98 flex items-center gap-2"
+                className="h-full w-full cursor-pointer rounded-full bg-linear-to-r from-neutral-100 via-neutral-100 to-white px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-black shadow-[0px_2px_0px_0px_var(--color-neutral-50)_inset,0px_0.5px_1px_0px_var(--color-neutral-400)] transition-all duration-100 active:scale-98 flex items-center gap-1.5 sm:gap-2 whitespace-nowrap"
               >
-                <Download className="w-4 h-4 text-black" />
+                <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-black" />
                 <span>Download CV</span>
               </a>
             </NoiseBackground>
@@ -308,10 +308,10 @@ export default function Hero({ isLoaded = false }: HeroProps) {
                     worksEl.scrollIntoView({ behavior: "smooth" });
                   }
                 }}
-                className="h-full w-full cursor-pointer rounded-full bg-linear-to-r from-neutral-100 via-neutral-100 to-white px-5 py-2.5 text-xs sm:text-sm font-semibold text-black shadow-[0px_2px_0px_0px_var(--color-neutral-50)_inset,0px_0.5px_1px_0px_var(--color-neutral-400)] transition-all duration-100 active:scale-98 flex items-center gap-2"
+                className="h-full w-full cursor-pointer rounded-full bg-linear-to-r from-neutral-100 via-neutral-100 to-white px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-black shadow-[0px_2px_0px_0px_var(--color-neutral-50)_inset,0px_0.5px_1px_0px_var(--color-neutral-400)] transition-all duration-100 active:scale-98 flex items-center gap-1.5 sm:gap-2 whitespace-nowrap"
               >
                 <span>See my Blogs</span>
-                <ArrowUpRight className="w-4 h-4 text-black" />
+                <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-black" />
               </button>
             </NoiseBackground>
           </div>
@@ -321,7 +321,7 @@ export default function Hero({ isLoaded = false }: HeroProps) {
       {/* User Image: Grounded at bottom of screen, positioned to the left, behind bottom controls */}
       <div
         ref={imageRef}
-        className="absolute bottom-0 left-[24%] sm:left-[28%] md:left-[32%] -translate-x-1/2 z-20 w-[90vw] max-w-[380px] sm:max-w-[460px] md:max-w-[540px] lg:max-w-[620px] xl:max-w-[660px] h-[68vh] sm:h-[70vh] md:h-[74vh] lg:h-[77vh] flex items-end justify-center pointer-events-none will-change-transform"
+        className="absolute bottom-0 left-1/2 md:left-[32%] -translate-x-1/2 z-10 md:z-20 w-[85vw] max-w-[320px] sm:max-w-[460px] md:max-w-[540px] lg:max-w-[620px] xl:max-w-[660px] h-[46vh] sm:h-[60vh] md:h-[74vh] lg:h-[77vh] flex items-end justify-center pointer-events-none will-change-transform"
       >
         <div className="relative w-full h-full">
           <Image
@@ -341,16 +341,16 @@ export default function Hero({ isLoaded = false }: HeroProps) {
         type="button"
         aria-label="Ask anything"
         onClick={() => setIsChatOpen(true)}
-        className="fixed sm:absolute right-0 top-1/2 z-30 bg-white/95 backdrop-blur-md border-l border-y border-black/10 py-4 px-2 rounded-l-xl shadow-[0_4px_20px_rgba(0,0,0,0.06)] flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-300 group hover:translate-x-[-3px]"
+        className="fixed sm:absolute right-0 top-1/2 z-30 bg-white/95 backdrop-blur-md border-l border-y border-black/10 py-2 sm:py-4 px-1 sm:px-2 rounded-l-lg sm:rounded-l-xl shadow-[0_4px_20px_rgba(0,0,0,0.06)] flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-300 group hover:translate-x-[-3px]"
       >
         <div
-          className="flex items-center gap-2"
+          className="flex items-center gap-1 sm:gap-2"
           style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
         >
-          <span className="w-5 h-5 flex items-center justify-center rounded-full text-xs bg-[#c5eb35] ">
+          <span className="w-3.5 h-3.5 sm:w-5 sm:h-5 flex items-center justify-center rounded-full text-[9px] sm:text-xs bg-[#c5eb35]">
             R
           </span>
-          <span className="font-sans text-[11px] font-semibold tracking-wider text-neutral-800 group-hover:text-black uppercase whitespace-nowrap">
+          <span className="font-sans text-[8px] sm:text-[11px] font-semibold tracking-wider text-neutral-800 group-hover:text-black uppercase whitespace-nowrap">
             Ask anything
           </span>
         </div>
@@ -376,10 +376,10 @@ export default function Hero({ isLoaded = false }: HeroProps) {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: "100%", opacity: 0 }}
               transition={{ type: "spring", damping: 28, stiffness: 280 }}
-              className="fixed right-0 top-1/2 -translate-y-1/2 z-50 w-[92vw] sm:w-[380px] md:w-[420px] h-[540px] sm:h-[600px] max-h-[90vh] bg-white rounded-l-3xl shadow-[0_20px_60px_rgba(0,0,0,0.18)] border-l border-y border-black/10 flex flex-col overflow-hidden"
+              className="fixed right-0 top-1/2 -translate-y-1/2 z-50 w-[86vw] sm:w-[380px] md:w-[420px] h-[440px] sm:h-[600px] max-h-[82vh] bg-white rounded-l-2xl sm:rounded-l-3xl shadow-[0_20px_60px_rgba(0,0,0,0.18)] border-l border-y border-black/10 flex flex-col overflow-hidden"
             >
               {/* Top Header */}
-              <div className="p-4 sm:p-5 border-b border-black/8 flex items-center justify-between bg-neutral-50/70">
+              <div className="p-3 sm:p-5 border-b border-black/8 flex items-center justify-between bg-neutral-50/70">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-full bg-[#c5eb35] flex items-center justify-center font-sans font-bold text-xs text-[#141b16] shadow-xs">
                     R

@@ -184,6 +184,15 @@ const BADGE_PRESETS: BadgeItem[] = [
   },
 ];
 
+// 5 Curated Playful Badges for compact mobile screens
+const MOBILE_BADGE_PRESETS: BadgeItem[] = [
+  BADGE_PRESETS[0], // Autonomous Agents (pill)
+  BADGE_PRESETS[1], // System Design (pill)
+  BADGE_PRESETS[3], // LLM Orchestration (pill)
+  BADGE_PRESETS[5], // Full-Stack AI (pill)
+  BADGE_PRESETS[9], // Circle Brain (circle)
+];
+
 interface PlayfulPhysicsCanvasProps {
   className?: string;
 }
@@ -201,7 +210,26 @@ export default function PlayfulPhysicsCanvas({
     rightWall?: Matter.Body;
   }>({});
   const isDraggingRef = useRef(false);
-  const [activeItems] = useState<BadgeItem[]>(BADGE_PRESETS);
+  const [activeItems, setActiveItems] = useState<BadgeItem[]>(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      return MOBILE_BADGE_PRESETS;
+    }
+    return BADGE_PRESETS;
+  });
+
+  useEffect(() => {
+    const handleCheckMobile = () => {
+      const isMobile = window.innerWidth < 768;
+      const targetList = isMobile ? MOBILE_BADGE_PRESETS : BADGE_PRESETS;
+      setActiveItems((prev) =>
+        prev.length !== targetList.length ? targetList : prev
+      );
+    };
+
+    handleCheckMobile();
+    window.addEventListener("resize", handleCheckMobile);
+    return () => window.removeEventListener("resize", handleCheckMobile);
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
