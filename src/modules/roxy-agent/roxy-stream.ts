@@ -44,7 +44,14 @@ export async function streamRoxyAgent(
 
   if (!res.ok || !res.body) {
     const errText = await res.text().catch(() => "");
-    callbacks.onError?.(new Error(errText || `HTTP ${res.status}`));
+    let friendlyMessage = errText || `HTTP ${res.status}`;
+    try {
+      const parsed = JSON.parse(errText);
+      if (parsed.error) friendlyMessage = parsed.error;
+    } catch {
+      // Not JSON, use raw text
+    }
+    callbacks.onError?.(new Error(friendlyMessage));
     return;
   }
 

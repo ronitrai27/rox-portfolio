@@ -14,8 +14,73 @@ import { roxyTools } from "@/lib/roxy-agent/roxy-tools";
 export type RoxyTools = InferUITools<typeof roxyTools>;
 export type RoxyUIMessage = UIMessage<never, UIDataTypes, RoxyTools>;
 
+// ============================================================================
+// RATE LIMITER CONFIG: Max 3 requests per IP per minute
+// ============================================================================
+const RATE_LIMIT_MAX_REQUESTS = 3;
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 60 seconds
+
+const ipRequestMap = new Map<string, number[]>();
+
+function getClientIp(req: Request): string {
+  const forwardedFor = req.headers.get("x-forwarded-for");
+  if (forwardedFor) {
+    return forwardedFor.split(",")[0].trim();
+  }
+  return (
+    req.headers.get("x-real-ip") ||
+    req.headers.get("cf-connecting-ip") ||
+    "127.0.0.1"
+  );
+}
+
+function checkRateLimit(ip: string): { allowed: boolean; retryAfterSeconds: number } {
+  const now = Date.now();
+  const windowStart = now - RATE_LIMIT_WINDOW_MS;
+  const timestamps = (ipRequestMap.get(ip) || []).filter((t) => t > windowStart);
+
+  if (timestamps.length >= RATE_LIMIT_MAX_REQUESTS) {
+    const oldest = timestamps[0];
+    const retryAfter = Math.ceil((oldest + RATE_LIMIT_WINDOW_MS - now) / 1000);
+    return { allowed: false, retryAfterSeconds: Math.max(1, retryAfter) };
+  }
+
+  timestamps.push(now);
+  ipRequestMap.set(ip, timestamps);
+
+  // Periodically prune stale entries to prevent memory growth
+  if (ipRequestMap.size > 2000) {
+    for (const [key, list] of ipRequestMap.entries()) {
+      const valid = list.filter((t) => t > windowStart);
+      if (valid.length === 0) ipRequestMap.delete(key);
+      else ipRequestMap.set(key, valid);
+    }
+  }
+
+  return { allowed: true, retryAfterSeconds: 0 };
+}
+
 export async function POST(req: Request) {
   try {
+    // 1. Check Rate Limit
+    const clientIp = getClientIp(req);
+    const { allowed, retryAfterSeconds } = checkRateLimit(clientIp);
+
+    if (!allowed) {
+      return new Response(
+        JSON.stringify({
+          error: `Rate limit reached: Max 3 requests allowed per minute. Please try again in ${retryAfterSeconds}s.`,
+        }),
+        {
+          status: 429,
+          headers: {
+            "Content-Type": "application/json",
+            "Retry-After": String(retryAfterSeconds),
+          },
+        }
+      );
+    }
+
     let body: any;
     try {
       body = await req.json();
