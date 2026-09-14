@@ -261,15 +261,15 @@ export default function Hero({ isLoaded = false }: HeroProps) {
         >
           <h2
             ref={title2Ref}
-            className="text-7xl font-sans leading-7 tracking-normal font-semibold"
+            className="text-7xl font-sans leading-7 tracking-tight font-semibold"
           >
-            & BUILDER
+            WHO SHIPS
           </h2>
           <p className="mt-10">
-            <span className="text-lg tracking-tight leading-0 font-sans font-medium">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit,
-              facere! <br />
-              Lorem ipsum dolor, sit amet consectetur adipisicing.
+            <span className="text-lg tracking-tight capitalize leading-0 font-sans font-medium">
+              code is the medium.
+              <br />
+              building the impossible is the point.
             </span>
           </p>
 
