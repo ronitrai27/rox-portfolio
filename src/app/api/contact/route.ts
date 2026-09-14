@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     const validation = contactSchema.safeParse(body);
     if (!validation.success) {
       const errorMsg =
-        validation.error.errors[0]?.message || "Invalid input data";
+        validation.error.issues?.[0]?.message || "Invalid input data";
       return new Response(JSON.stringify({ error: errorMsg }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
