@@ -591,7 +591,7 @@ export default function Hero({ isLoaded = false }: HeroProps) {
         >
           {/* GitHub */}
           <a
-            href="https://github.com"
+            href="https://github.com/ronitrai27"
             target="_blank"
             rel="noreferrer"
             aria-label="GitHub"
@@ -608,7 +608,7 @@ export default function Hero({ isLoaded = false }: HeroProps) {
 
           {/* LinkedIn */}
           <a
-            href="https://linkedin.com"
+            href="https://www.linkedin.com/in/rox-aa53a1300/"
             target="_blank"
             rel="noreferrer"
             aria-label="LinkedIn"
@@ -621,7 +621,7 @@ export default function Hero({ isLoaded = false }: HeroProps) {
 
           {/* X / Twitter */}
           <a
-            href="https://x.com"
+            href="https://x.com/roxrai0027"
             target="_blank"
             rel="noreferrer"
             aria-label="X"

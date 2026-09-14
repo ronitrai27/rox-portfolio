@@ -7,10 +7,9 @@ export const ROXY_PROFILE = {
   location: "India",
   email: "ronitrai1237@gmail.com",
   socials: {
-    github: "https://github.com",
-    linkedin: "https://linkedin.com",
-    x: "https://x.com",
-    instagram: "https://instagram.com",
+    github: "https://github.com/ronitrai27",
+    linkedin: "https://www.linkedin.com/in/rox-aa53a1300/",
+    x: "https://x.com/roxrai0027",
     portfolio: "https://ronitrai.dev",
     resume: "/resume.pdf",
   },

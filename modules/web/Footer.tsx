@@ -114,7 +114,7 @@ const Footer = forwardRef<HTMLDivElement, FooterProps>(
           <div className="flex items-center gap-2 sm:gap-3 text-white">
             {/* GitHub */}
             <a
-              href="https://github.com"
+              href="https://github.com/ronitrai27"
               target="_blank"
               rel="noreferrer"
               aria-label="GitHub"
@@ -131,7 +131,7 @@ const Footer = forwardRef<HTMLDivElement, FooterProps>(
 
             {/* LinkedIn */}
             <a
-              href="https://linkedin.com"
+              href="https://www.linkedin.com/in/rox-aa53a1300/"
               target="_blank"
               rel="noreferrer"
               aria-label="LinkedIn"
@@ -144,7 +144,7 @@ const Footer = forwardRef<HTMLDivElement, FooterProps>(
 
             {/* X / Twitter */}
             <a
-              href="https://x.com"
+              href="https://x.com/roxrai0027"
               target="_blank"
               rel="noreferrer"
               aria-label="X"
