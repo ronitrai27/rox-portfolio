@@ -4,10 +4,24 @@ import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { ArrowUpRight, Download, Mic, Send, X } from "lucide-react";
+import {
+  ArrowUpRight,
+  CheckCircle2,
+  Download,
+  Loader2,
+  LucideBrain,
+  Mic,
+  RotateCcw,
+  Send,
+  Sparkles,
+  X,
+} from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { NoiseBackground } from "@/components/ui/noise-background";
 import { SpinningText } from "@/components/ui/spinning-text";
+import { useRoxyAgent } from "@/modules/roxy-agent/use-roxy-agent";
 
 gsap.registerPlugin(useGSAP);
 
@@ -15,10 +29,29 @@ interface HeroProps {
   isLoaded?: boolean;
 }
 
-interface ChatMessage {
-  role: "assistant" | "user";
-  text: string;
-}
+const STARTER_SUGGESTIONS = [
+  {
+    label: "Who is ROX & what does he do?",
+    prompt: "Who is Ronit Rai (ROX) and what is his background?",
+  },
+  {
+    label: "What are ROX's top projects?",
+    prompt: "Tell me about ROX's top projects and what technologies he used.",
+  },
+  {
+    label: "What is ROX's core tech stack?",
+    prompt: "What is ROX's core technical stack and engineering expertise?",
+  },
+  {
+    label: "Email me ROX's resume & links",
+    prompt:
+      "Can you send ROX's complete portfolio details, resume, and links to my email?",
+  },
+  {
+    label: "Leave a message for Ronit",
+    prompt: "I would like to send a project inquiry / message to Ronit Rai.",
+  },
+];
 
 export default function Hero({ isLoaded = false }: HeroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -30,58 +63,28 @@ export default function Hero({ isLoaded = false }: HeroProps) {
   const bottomArrowRef = useRef<HTMLDivElement>(null);
   const bottomSocialsRef = useRef<HTMLDivElement>(null);
   const quickInfoRef = useRef<HTMLButtonElement>(null);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
 
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      role: "assistant",
-      text: "Hey! I'm Roxy, ROX's AI Agent. Ask me anything about his projects, experience, or tech stack!",
-    },
-  ]);
+
+  const { messages, toolStatus, isStreaming, sendMessage, stop, clear } =
+    useRoxyAgent();
+
+  // Auto-scroll chat to bottom
+  useEffect(() => {
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+    }
+  }, [messages, toolStatus, isStreaming]);
 
   const handleSendMessage = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!inputValue.trim()) return;
+    if (!inputValue.trim() || isStreaming) return;
 
-    const userText = inputValue.trim();
-    const newMessages = [
-      ...messages,
-      { role: "user" as const, text: userText },
-    ];
-    setMessages(newMessages);
+    const text = inputValue.trim();
     setInputValue("");
-
-    // Smart contextual response
-    setTimeout(() => {
-      const lower = userText.toLowerCase();
-      let reply =
-        "ROX is a Full-Stack AI Engineer & Builder architecting intelligent distributed systems, high-performance web applications, and real-time AI agents.";
-
-      if (
-        lower.includes("stack") ||
-        lower.includes("tech") ||
-        lower.includes("skills")
-      ) {
-        reply =
-          "ROX works with Next.js, React, TypeScript, Python, PyTorch, LangGraph, GSAP, Tailwind CSS, Three.js, and multi-agent workflows.";
-      } else if (lower.includes("project") || lower.includes("work")) {
-        reply =
-          "ROX's top projects include wekraft, clarioo, looma, Aria, Enterprise sales agent, and vocalx. Check out the Works page for more details!";
-      } else if (
-        lower.includes("contact") ||
-        lower.includes("email") ||
-        lower.includes("hire")
-      ) {
-        reply =
-          "You can reach out directly to ROX via email at ronitrai1237@gmail.com or connect on LinkedIn and GitHub!";
-      }
-
-      setMessages([
-        ...newMessages,
-        { role: "assistant" as const, text: reply },
-      ]);
-    }, 450);
+    sendMessage(text);
   };
 
   // Set initial states for clean GSAP entrance
@@ -279,13 +282,14 @@ export default function Hero({ isLoaded = false }: HeroProps) {
                 "rgb(220, 252, 70)",
               ]}
             >
-              <button
-                type="button"
+              <a
+                href="/resume.pdf"
+                download="Ronit_Rai_Resume.pdf"
                 className="h-full w-full cursor-pointer rounded-full bg-linear-to-r from-neutral-100 via-neutral-100 to-white px-5 py-2.5 text-xs sm:text-sm font-semibold text-black shadow-[0px_2px_0px_0px_var(--color-neutral-50)_inset,0px_0.5px_1px_0px_var(--color-neutral-400)] transition-all duration-100 active:scale-98 flex items-center gap-2"
               >
                 <Download className="w-4 h-4 text-black" />
                 <span>Download CV</span>
-              </button>
+              </a>
             </NoiseBackground>
 
             <NoiseBackground
@@ -391,36 +395,120 @@ export default function Hero({ isLoaded = false }: HeroProps) {
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setIsChatOpen(false)}
-                  className="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition-colors cursor-pointer"
-                  aria-label="Close chat"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-1.5">
+                  {messages.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={clear}
+                      className="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 flex items-center justify-center transition-colors cursor-pointer"
+                      title="Clear chat"
+                      aria-label="Clear chat"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => setIsChatOpen(false)}
+                    className="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition-colors cursor-pointer"
+                    aria-label="Close chat"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
-              {/* Body Space: Chat Messages */}
-              <div className="flex-1 p-4 overflow-y-auto space-y-3.5 text-xs sm:text-sm font-sans">
-                {messages.map((msg, i) => (
-                  <div
-                    key={i}
-                    className={`flex ${
-                      msg.role === "user" ? "justify-end" : "justify-start"
-                    }`}
-                  >
-                    <div
-                      className={`max-w-[82%] px-3.5 py-2.5 rounded-2xl leading-relaxed ${
-                        msg.role === "user"
-                          ? "bg-[#c5eb35] text-[#141b16] font-medium rounded-br-xs"
-                          : "bg-neutral-100 text-neutral-800 rounded-bl-xs"
-                      }`}
-                    >
-                      {msg.text}
+              {/* Body Space: Chat Messages or Starter Suggestions */}
+              <div
+                ref={chatScrollRef}
+                className="flex-1 p-4 overflow-y-auto space-y-3.5 text-xs sm:text-sm font-sans"
+              >
+                {messages.length === 0 ? (
+                  <div className="flex flex-col gap-3 py-2">
+                    <div className="px-1">
+                      <p className="text-sm font-mono uppercase tracking-wide mb-1">
+                        <LucideBrain className="inline ml-2 size-5" /> Quick
+                        Suggestions
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col gap-2 pt-1">
+                      {STARTER_SUGGESTIONS.map((item, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => sendMessage(item.prompt)}
+                          className="w-full text-left p-2.5 rounded-xl border border-black/6 bg-neutral-50/80 hover:bg-[#c5eb35]/20 hover:border-[#c5eb35]/50 transition-all duration-200 group flex items-center justify-between gap-2 cursor-pointer shadow-2xs"
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <span className="text-xs text-neutral-700 group-hover:text-neutral-900 font-medium truncate">
+                              {item.label}
+                            </span>
+                          </div>
+                          <ArrowUpRight className="w-3.5 h-3.5 text-neutral-400 group-hover:text-neutral-900 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        </button>
+                      ))}
                     </div>
                   </div>
-                ))}
+                ) : (
+                  <>
+                    {messages.map((msg, i) => (
+                      <React.Fragment key={msg.id || i}>
+                        {msg.role === "user" && (
+                          <div className="flex justify-end">
+                            <div className="max-w-[84%] px-3.5 py-2.5 rounded-2xl leading-relaxed bg-[#c5eb35] text-[#141b16] font-medium rounded-br-xs text-xs sm:text-sm shadow-2xs">
+                              {msg.text}
+                            </div>
+                          </div>
+                        )}
+
+                        {msg.role === "assistant" && (
+                          <div className="flex justify-start">
+                            <div className="max-w-[88%] px-3.5 py-2.5 rounded-2xl leading-relaxed bg-neutral-100 text-neutral-800 rounded-bl-xs text-xs sm:text-[13px]">
+                              {msg.text ? (
+                                <div className="prose prose-xs max-w-none text-neutral-800 [&>p]:mb-2 [&>p:last-child]:mb-0 [&>ul]:pl-4 [&>ul]:list-disc [&>ul]:mb-2 [&>li]:mb-1 [&>ol]:pl-4 [&>ol]:list-decimal [&>strong]:font-semibold [&>a]:text-emerald-700 [&>a]:underline">
+                                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                    {msg.text}
+                                  </ReactMarkdown>
+                                </div>
+                              ) : isStreaming ? (
+                                <div className="flex items-center gap-1.5 py-1 text-neutral-500">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 animate-bounce" />
+                                  <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 animate-bounce [animation-delay:0.15s]" />
+                                  <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 animate-bounce [animation-delay:0.3s]" />
+                                </div>
+                              ) : null}
+                            </div>
+                          </div>
+                        )}
+
+                        {msg.role === "tool" && (
+                          <div className="w-full my-1">
+                            {msg.toolStatus === "running" ? (
+                              <div className="rounded-xl border border-amber-300/70 bg-amber-50/80 p-2.5 flex items-center gap-2 text-amber-900 text-xs">
+                                <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-600 shrink-0" />
+                                <span className="font-medium">
+                                  {msg.toolName === "contactRoxy"
+                                    ? "Sending your message to Ronit's inbox..."
+                                    : "Dispatching ROX's details to your email..."}
+                                </span>
+                              </div>
+                            ) : (
+                              <div className="rounded-xl border border-emerald-300/70 bg-emerald-50/80 p-2.5 flex items-start gap-2 text-emerald-900 text-xs">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                                <div className="leading-relaxed font-normal">
+                                  {msg.toolOutput?.message ||
+                                    "Action completed successfully."}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </>
+                )}
               </div>
 
               {/* Bottom Input Bar with Mic Icon & Send Button */}
@@ -434,7 +522,8 @@ export default function Hero({ isLoaded = false }: HeroProps) {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     placeholder="Ask anything..."
-                    className="w-full pl-3.5 pr-10 py-2.5 text-xs sm:text-sm bg-white border border-black/10 rounded-full focus:outline-hidden focus:border-[#c5eb35] focus:ring-1 focus:ring-[#c5eb35] transition-all text-neutral-900 placeholder:text-neutral-400"
+                    disabled={isStreaming}
+                    className="w-full pl-3.5 pr-10 py-2.5 text-xs sm:text-sm bg-white border border-black/10 rounded-full focus:outline-hidden focus:border-[#c5eb35] focus:ring-1 focus:ring-[#c5eb35] transition-all text-neutral-900 placeholder:text-neutral-400 disabled:opacity-60"
                   />
                   <button
                     type="button"
@@ -444,7 +533,7 @@ export default function Hero({ isLoaded = false }: HeroProps) {
                       );
                     }}
                     className="absolute right-2.5 p-1 text-neutral-400 hover:text-neutral-800 transition-colors cursor-pointer"
-                    title="Voice input / suggestion"
+                    title="Suggestion"
                   >
                     <Mic className="w-4 h-4" />
                   </button>
@@ -452,11 +541,15 @@ export default function Hero({ isLoaded = false }: HeroProps) {
 
                 <button
                   type="submit"
-                  disabled={!inputValue.trim()}
+                  disabled={!inputValue.trim() || isStreaming}
                   className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#c5eb35] hover:bg-[#b5e024] disabled:opacity-50 disabled:cursor-not-allowed text-[#141b16] flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
                   aria-label="Send message"
                 >
-                  <Send className="w-4 h-4" />
+                  {isStreaming ? (
+                    <Loader2 className="w-4 h-4 animate-spin text-[#141b16]" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
                 </button>
               </form>
             </motion.aside>

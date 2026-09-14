@@ -1,6 +1,6 @@
 "use client";
 
-import React, { forwardRef, useRef } from "react";
+import React, { forwardRef, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
@@ -12,8 +12,12 @@ import {
   Coffee,
   MapPin,
   Terminal,
+  ChevronDown,
+  Sparkles,
 } from "lucide-react";
 import Footer from "../web/Footer";
+import TechStackSkills from "./TechStackSkills";
+import GitHubActivitySection from "./GitHubActivitySection";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -21,11 +25,61 @@ interface KnowMeBetterProps {
   className?: string;
 }
 
+interface FaqStory {
+  id: string;
+  number: string;
+  title: string;
+  iconBg: string;
+  iconColor: string;
+  icon: typeof Briefcase;
+  content: string;
+}
+
+const faqStories: FaqStory[] = [
+  {
+    id: "role",
+    number: "01",
+    title: "In my current role",
+    iconBg: "bg-[#d8f966]",
+    iconColor: "text-[#1c2411]",
+    icon: Briefcase,
+    content:
+      "As Founder of VRSA Analytics, I own end-to-end product engineering and system design for e-commerce, B2B, and B2C platforms. I lead architecture, client delivery, and technical execution — shipping production systems (including inventory platforms and AI chatbots) while generating ₹3.5L+ in revenue. I also take on selective freelance work building multi-tenant SaaS products with strong focus on reliability, cost-efficient LLM usage, and clean CI/CD.",
+  },
+  {
+    id: "process",
+    number: "02",
+    title: "My process of doing",
+    iconBg: "bg-[#ff7640]",
+    iconColor: "text-white",
+    icon: Workflow,
+    content:
+      "I start with deep requirement discovery, then design systems that stay simple on the surface even when the internals are complex. Most of my work revolves around multi-agent architectures (LangGraph supervisor patterns, Temporal durable workflows, MCP tool integrations, Redis checkpointing, and layered guardrails). I obsess over observability, fault tolerance, and measurable outcomes — then ship the whole thing end-to-end from architecture to production.",
+  },
+  {
+    id: "hobbies",
+    number: "03",
+    title: "When I'm not working",
+    iconBg: "bg-[#90caff]",
+    iconColor: "text-[#09284a]",
+    icon: Coffee,
+    content:
+      "I love good food, short trips to new places, and spending hours experimenting with the latest open-source tools and AI frameworks. Whether it's trying a new cuisine, exploring a different city, or tinkering with the newest agent libraries just for fun — that's how I recharge.",
+  },
+];
+
 const KnowMeBetterSection = forwardRef<HTMLDivElement, KnowMeBetterProps>(
   ({ className = "" }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const imageCardRef = useRef<HTMLDivElement>(null);
     const contentListRef = useRef<HTMLDivElement>(null);
+
+    // Default open first FAQ item (#0)
+    const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+    const toggleStory = (index: number) => {
+      setOpenIndex((prev) => (prev === index ? null : index));
+    };
 
     // Combine forwarded ref and internal ref
     const setRefs = (node: HTMLDivElement | null) => {
@@ -54,7 +108,7 @@ const KnowMeBetterSection = forwardRef<HTMLDivElement, KnowMeBetterProps>(
           },
         });
       },
-      { scope: containerRef }
+      { scope: containerRef },
     );
 
     return (
@@ -83,7 +137,8 @@ const KnowMeBetterSection = forwardRef<HTMLDivElement, KnowMeBetterProps>(
             </div>
 
             <p className="text-sm sm:text-base text-[#616862] max-w-md leading-relaxed font-sans font-normal">
-              A deeper look into my role, engineering process, and what drives my work forward.
+              A deeper look into my role, engineering process, and what drives
+              my work forward.
             </p>
           </div>
 
@@ -120,94 +175,90 @@ const KnowMeBetterSection = forwardRef<HTMLDivElement, KnowMeBetterProps>(
                   />
                 </div>
               </div>
-
-              {/* Quick Info Cards */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="p-4 rounded-2xl bg-white/90 border border-black/6 shadow-sm">
-                  <div className="text-[11px] font-mono uppercase tracking-wider text-[#7a827b]">
-                    Focus
-                  </div>
-                  <div className="mt-1 font-sans text-xs sm:text-sm font-semibold text-[#141b16]">
-                    Autonomous AI Agents &amp; Systems
-                  </div>
-                </div>
-                <div className="p-4 rounded-2xl bg-white/90 border border-black/6 shadow-sm">
-                  <div className="text-[11px] font-mono uppercase tracking-wider text-[#7a827b]">
-                    Mindset
-                  </div>
-                  <div className="mt-1 font-sans text-xs sm:text-sm font-semibold text-[#141b16]">
-                    Build • Ship • Scale
-                  </div>
-                </div>
-              </div>
             </div>
 
-            {/* Right Column: 3 Question / Answer Story Blocks */}
+            {/* Right Column: Interactive FAQ Accordion Story Blocks */}
             <div
               ref={contentListRef}
-              className="lg:col-span-7 flex flex-col gap-6"
+              className="lg:col-span-7 flex flex-col gap-4 sm:gap-5"
             >
-              {/* Question 1: In my current role */}
-              <div className="qa-card p-6 sm:p-8 rounded-[24px] bg-white border border-black/6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] transition-all duration-300">
-                <div className="flex items-center gap-3 mb-3.5">
-                  <div className="w-8 h-8 rounded-full bg-[#d8f966] text-[#1c2411] flex items-center justify-center shrink-0">
-                    <Briefcase className="w-4 h-4 stroke-[2]" />
-                  </div>
-                  <h3 className="font-sans text-lg sm:text-xl font-bold tracking-tight text-[#141b16]">
-                    In my current role
-                  </h3>
-                </div>
-                <p className="font-sans text-sm sm:text-[15px] leading-relaxed text-[#4e5550] font-normal">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                </p>
-                <div className="mt-4 pt-3.5 border-t border-black/6 flex flex-wrap gap-2 text-[11px] font-mono text-[#5a625b]">
-                  <span className="px-2.5 py-1 rounded-md bg-[#f0f0ed]">AI Systems</span>
-                  <span className="px-2.5 py-1 rounded-md bg-[#f0f0ed]">Full-Stack</span>
-                  <span className="px-2.5 py-1 rounded-md bg-[#f0f0ed]">Architecture</span>
-                </div>
-              </div>
+              {faqStories.map((story, index) => {
+                const isOpen = openIndex === index;
+                const IconComponent = story.icon;
 
-              {/* Question 2: My process of doing */}
-              <div className="qa-card p-6 sm:p-8 rounded-[24px] bg-white border border-black/6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] transition-all duration-300">
-                <div className="flex items-center gap-3 mb-3.5">
-                  <div className="w-8 h-8 rounded-full bg-[#ff7640] text-white flex items-center justify-center shrink-0">
-                    <Workflow className="w-4 h-4 stroke-[2]" />
-                  </div>
-                  <h3 className="font-sans text-lg sm:text-xl font-bold tracking-tight text-[#141b16]">
-                    My process of doing
-                  </h3>
-                </div>
-                <p className="font-sans text-sm sm:text-[15px] leading-relaxed text-[#4e5550] font-normal">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida. Duis aute irure dolor in reprehenderit.
-                </p>
-                <div className="mt-4 pt-3.5 border-t border-black/6 flex flex-wrap gap-2 text-[11px] font-mono text-[#5a625b]">
-                  <span className="px-2.5 py-1 rounded-md bg-[#f0f0ed]">First-Principles</span>
-                  <span className="px-2.5 py-1 rounded-md bg-[#f0f0ed]">Prototyping</span>
-                  <span className="px-2.5 py-1 rounded-md bg-[#f0f0ed]">Execution</span>
-                </div>
-              </div>
+                return (
+                  <div
+                    key={story.id}
+                    className={`qa-card rounded-[26px] transition-all duration-300 border overflow-hidden ${
+                      isOpen
+                        ? "bg-white border-black/12 shadow-[0_16px_40px_rgba(0,0,0,0.08)] ring-1 ring-black/5"
+                        : "bg-white/80 hover:bg-white border-black/6 shadow-xs hover:shadow-sm"
+                    }`}
+                  >
+                    {/* Accordion Header Button */}
+                    <button
+                      type="button"
+                      onClick={() => toggleStory(index)}
+                      className="w-full p-5 sm:p-7 flex items-center justify-between gap-4 text-left cursor-pointer select-none transition-colors"
+                      aria-expanded={isOpen}
+                    >
+                      <div className="flex items-center gap-3.5 min-w-0">
+                        <div
+                          className={`w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-xs transition-transform duration-300 ${
+                            story.iconBg
+                          } ${story.iconColor} ${
+                            isOpen ? "scale-105" : "scale-100"
+                          }`}
+                        >
+                          <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2]" />
+                        </div>
 
-              {/* Question 3: When I'm not working */}
-              <div className="qa-card p-6 sm:p-8 rounded-[24px] bg-white border border-black/6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] transition-all duration-300">
-                <div className="flex items-center gap-3 mb-3.5">
-                  <div className="w-8 h-8 rounded-full bg-[#90caff] text-[#09284a] flex items-center justify-center shrink-0">
-                    <Coffee className="w-4 h-4 stroke-[2]" />
+                        <div className="truncate">
+                          <h3 className="font-sans text-base sm:text-lg md:text-xl font-bold tracking-tight text-[#141b16] truncate">
+                            {story.title}
+                          </h3>
+                        </div>
+                      </div>
+
+                      {/* Right Toggle Icon */}
+                      <div
+                        className={`w-8 h-8 rounded-full border flex items-center justify-center shrink-0 transition-all duration-300 ${
+                          isOpen
+                            ? "bg-[#141b16] text-[#c5eb35] border-transparent rotate-180 shadow-xs"
+                            : "bg-black/[0.04] text-[#5a625b] border-black/6 hover:bg-black/8 rotate-0"
+                        }`}
+                      >
+                        <ChevronDown className="w-4 h-4" />
+                      </div>
+                    </button>
+
+                    {/* Smooth Collapsible Body via CSS Grid Transition */}
+                    <div
+                      className={`grid transition-all duration-300 ease-in-out ${
+                        isOpen
+                          ? "grid-rows-[1fr] opacity-100"
+                          : "grid-rows-[0fr] opacity-0"
+                      }`}
+                    >
+                      <div className="overflow-hidden">
+                        <div className="px-5 sm:px-7 pb-6 sm:pb-7 pt-1 border-t border-black/5">
+                          <p className="font-sans text-sm sm:text-[15px] leading-relaxed text-[#4e5550] font-normal">
+                            {story.content}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="font-sans text-lg sm:text-xl font-bold tracking-tight text-[#141b16]">
-                    When I&apos;m not working
-                  </h3>
-                </div>
-                <p className="font-sans text-sm sm:text-[15px] leading-relaxed text-[#4e5550] font-normal">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum. Cras venenatis euismod malesuada. Pellentesque eget nisi vel elit congue pulvinar. Mauris non erat justo. Nullam id dolor id nibh ultricies vehicula ut id elit.
-                </p>
-                <div className="mt-4 pt-3.5 border-t border-black/6 flex flex-wrap gap-2 text-[11px] font-mono text-[#5a625b]">
-                  <span className="px-2.5 py-1 rounded-md bg-[#f0f0ed]">Research</span>
-                  <span className="px-2.5 py-1 rounded-md bg-[#f0f0ed]">Exploration</span>
-                  <span className="px-2.5 py-1 rounded-md bg-[#f0f0ed]">Craft</span>
-                </div>
-              </div>
+                );
+              })}
             </div>
           </div>
+
+          {/* 02 / Tech Stack & Skills Grid */}
+          <TechStackSkills />
+
+          {/* 03 / GitHub Activity & Stats Heatmap */}
+          <GitHubActivitySection />
         </div>
 
         {/* Underlying Footer Section */}
@@ -216,7 +267,7 @@ const KnowMeBetterSection = forwardRef<HTMLDivElement, KnowMeBetterProps>(
         </div>
       </section>
     );
-  }
+  },
 );
 
 KnowMeBetterSection.displayName = "KnowMeBetterSection";
