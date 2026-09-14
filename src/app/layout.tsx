@@ -3,6 +3,7 @@ import "./globals.css";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { SmoothCursor } from "@/components/ui/smooth-cursor";
+import { DesktopRecommendationModal } from "@/components/ui/DesktopRecommendationModal";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -33,6 +34,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-white text-neutral-900 selection:bg-[#c5eb35] selection:text-black">
         <SmoothCursor />
+        <DesktopRecommendationModal />
         {children}
       </body>
     </html>

@@ -347,6 +347,13 @@ export default function PlayfulPhysicsCanvas({
       mouse.element.removeEventListener("mousewheel", (mouse as any).mousewheel);
       mouse.element.removeEventListener("DOMMouseScroll", (mouse as any).mousewheel);
       (mouse as any).mousewheel = () => {};
+
+      // On mobile screens (< 768px), disable Matter's aggressive touch hijacking so vertical swipe scrolls the page freely
+      if (window.innerWidth < 768) {
+        mouse.element.removeEventListener("touchmove", (mouse as any).mousemove);
+        mouse.element.removeEventListener("touchstart", (mouse as any).mousedown);
+        mouse.element.removeEventListener("touchend", (mouse as any).mouseup);
+      }
     }
 
     const mouseConstraint = MouseConstraint.create(engine, {
@@ -466,11 +473,11 @@ export default function PlayfulPhysicsCanvas({
   };
 
   return (
-    <div className={`absolute inset-0 w-full h-full pointer-events-auto overflow-hidden z-20 ${className}`}>
+    <div className={`absolute inset-0 w-full h-full pointer-events-none md:pointer-events-auto touch-pan-y overflow-hidden z-20 ${className}`}>
       {/* Physics World Canvas / Interaction Layer */}
       <div
         ref={containerRef}
-        className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing select-none"
+        className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing select-none touch-pan-y pointer-events-none md:pointer-events-auto"
       >
         {activeItems.map((item) => {
           const Icon = item.icon;
@@ -491,7 +498,7 @@ export default function PlayfulPhysicsCanvas({
                 left: 0,
                 transform: "translate3d(-500px, -500px, 0)", // Offscreen until physics ticker sets position
               }}
-              className={`flex items-center justify-center font-sans text-[12px] sm:text-[13px] font-normal tracking-[0.02em] rounded-full shadow-[0_4px_16px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-shadow will-change-transform select-none touch-none ${
+              className={`flex items-center justify-center font-sans text-[12px] sm:text-[13px] font-normal tracking-[0.02em] rounded-full shadow-[0_4px_16px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-shadow will-change-transform select-none pointer-events-auto ${
                 item.bgClass
               } ${item.textClass} ${item.borderClass || ""}`}
             >
